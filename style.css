@@ -6,6 +6,18 @@ body {
     font-family: 'Verdana';
     color: #fff;
     background: #000;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+}
+
+.game-canvas {
+    display: block;
+    margin: 0 auto;
 }
 
 footer {

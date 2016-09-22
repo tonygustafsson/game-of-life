@@ -3,17 +3,16 @@
 
     var gameCanvas = document.getElementById('game-canvas'),
         ctx = gameCanvas.getContext("2d"),
-        canvasWidth = Math.floor(window.innerWidth * 0.8),
+        canvasWidth = Math.floor(window.innerWidth * 0.95),
         canvasHeight = Math.floor(window.innerHeight * 0.8),
         cellSize = 10,
         cells = [],
         numberOfRows = Math.floor(canvasHeight / cellSize),
         numberOfColumns = Math.floor(canvasWidth / cellSize),
         percentageAlive = 8,
-        gameTickSpeed = 25,
-        iterations = 20;
+        gameTickSpeed = 10;
 
-    function checkNeighborForLife(cell) {
+    function isNeighborAlive(cell) {
         if (typeof cell === "undefined") return false;
 
         return cell.alive;
@@ -34,14 +33,14 @@
             bottomRight = cells['row-' + (row - 1) + '-column-' + (column + 1)],
             bottomLeft = cells['row-' + (row - 1) + '-column-' + (column - 1)];
 
-        if (checkNeighborForLife(top)) neighbors++;
-        if (checkNeighborForLife(topLeft)) neighbors++;
-        if (checkNeighborForLife(topRight)) neighbors++;
-        if (checkNeighborForLife(right)) neighbors++;
-        if (checkNeighborForLife(left)) neighbors++;
-        if (checkNeighborForLife(bottom)) neighbors++;
-        if (checkNeighborForLife(bottomRight)) neighbors++;
-        if (checkNeighborForLife(bottomLeft)) neighbors++;
+        if (isNeighborAlive(top)) neighbors++;
+        if (isNeighborAlive(topLeft)) neighbors++;
+        if (isNeighborAlive(topRight)) neighbors++;
+        if (isNeighborAlive(right)) neighbors++;
+        if (isNeighborAlive(left)) neighbors++;
+        if (isNeighborAlive(bottom)) neighbors++;
+        if (isNeighborAlive(bottomRight)) neighbors++;
+        if (isNeighborAlive(bottomLeft)) neighbors++;
 
         return neighbors;
     }
@@ -56,7 +55,6 @@
                     'id': id,
                     'row': rowId,
                     'column': columnId,
-                    'iteration': 0,
                     'alive': alive
                 };
 
@@ -68,30 +66,6 @@
     function setCanvasSize() {
         ctx.canvas.width  = canvasWidth;
         ctx.canvas.height = canvasHeight;
-    }
-
-    function checkForLife() {
-        for (var cellId in cells) {
-            var cell = cells[cellId];
-
-            cell.neighbors = getLivingNeighbors(cell);
-            cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
-
-            if (cell.alive) {
-                // Only survive if it got 2-3 neighbors
-                cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
-            }
-            else {
-                // Start life if 3 neighbors
-                cell.willBeAlive = cell.neighbors === 3;
-            }
-        }
-
-        for (var cellId in cells) {
-            var cell = cells[cellId];
-
-            cell.alive = cell.willBeAlive;
-        }
     }
 
     function getCellColor(cell) {
@@ -106,16 +80,60 @@
         }
     }
 
+    function checkForLife() {
+        // First loop checks which cells will be alive
+        // Cannot change state at the same time because surrounding cells will be changed before
+        var cellId,
+            cell;
+        
+        for (cellId in cells) {
+            if (!cells.hasOwnProperty(cellId)) {
+                continue;
+            }
+
+            cell = cells[cellId];
+
+            cell.neighbors = getLivingNeighbors(cell);
+            cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+
+            if (cell.alive) {
+                // Only survive if it got 2-3 neighbors
+                cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+            }
+            else {
+                // Start life if 3 neighbors
+                cell.willBeAlive = cell.neighbors === 3;
+            }
+        }
+
+        for (cellId in cells) {
+            if (!cells.hasOwnProperty(cellId)) {
+                continue;
+            }
+
+            cell = cells[cellId];
+
+            cell.alive = cell.willBeAlive;
+        }
+    }
+
     function paintCanvas() {
         for (var cellId in cells) {
+            if (!cells.hasOwnProperty(cellId)) {
+                continue;
+            }
+
             var cell = cells[cellId],
                 posX = Math.floor(cell.column * cellSize),
                 posY = Math.floor(cell.row * cellSize);
 
             ctx.beginPath();
-            ctx.rect(posX, posY, cellSize, cellSize);
+            ctx.arc(posX, posY, cellSize / 2, 0, 2 * Math.PI, false);
             ctx.fillStyle = getCellColor(cell);
             ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#001100';
+            ctx.stroke();
         }
     }
 
