@@ -1,4 +1,4 @@
-(function video() {
+(function gameOfLife() {
     "use strict";
 
     var gameCanvas = document.getElementById('game-canvas'),
@@ -10,7 +10,12 @@
         numberOfRows = Math.floor(canvasHeight / cellSize),
         numberOfColumns = Math.floor(canvasWidth / cellSize),
         percentageAlive = 8,
-        gameTickSpeed = 10;
+        gameTickSpeed = 15;
+
+    function setCanvasSize() {
+        ctx.canvas.width  = canvasWidth;
+        ctx.canvas.height = canvasHeight;
+    }
 
     function isNeighborAlive(cell) {
         if (typeof cell === "undefined") return false;
@@ -55,7 +60,8 @@
                     'id': id,
                     'row': rowId,
                     'column': columnId,
-                    'alive': alive
+                    'alive': alive,
+                    'willBeAlive': alive
                 };
 
                 cells[cell.id] = cell;
@@ -63,13 +69,16 @@
         }
     }
 
-    function setCanvasSize() {
-        ctx.canvas.width  = canvasWidth;
-        ctx.canvas.height = canvasHeight;
-    }
-
     function getCellColor(cell) {
-        if (!cell.alive) {
+        if (cell.alive && !cell.willBeAlive) {
+            // Dying
+            return "#b7542c";
+        }
+        else if (!cell.alive && cell.willBeAlive) {
+            // New cell
+            return "#00ab71";
+        }
+        else if (!cell.alive) {
             return "#000";
         }
         else if (cell.neighbors === 3) {
@@ -80,13 +89,14 @@
         }
     }
 
-    function checkForLife() {
-        // First loop checks which cells will be alive
-        // Cannot change state at the same time because surrounding cells will be changed before
+    function checkForFutureLife() {
         var cellId,
             cell;
         
         for (cellId in cells) {
+            // First loop checks which cells will be alive
+            // Cannot change state at the same time because surrounding cells will be changed before
+
             if (!cells.hasOwnProperty(cellId)) {
                 continue;
             }
@@ -105,8 +115,15 @@
                 cell.willBeAlive = cell.neighbors === 3;
             }
         }
+    }
+
+    function checkForLife() {
+        var cellId,
+            cell;
 
         for (cellId in cells) {
+            // Second loop actually kills cells
+
             if (!cells.hasOwnProperty(cellId)) {
                 continue;
             }
@@ -137,14 +154,19 @@
         }
     }
 
-    function startTime() {
+    function startLife() {
         checkForLife();
         paintCanvas();
 
-        setTimeout(startTime, gameTickSpeed);
+        setTimeout(function () {
+            checkForFutureLife();
+            paintCanvas();
+        }, gameTickSpeed * 2);
+
+        setTimeout(startLife, gameTickSpeed);
     }
 
     setCanvasSize();
     createCells();
-    startTime();
+    startLife();
 })();
