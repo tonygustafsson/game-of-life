@@ -9,11 +9,11 @@
         cells = [],
         numberOfRows = Math.floor(canvasHeight / cellSize),
         numberOfColumns = Math.floor(canvasWidth / cellSize),
-        percentageAlive = 5,
-        gameTickSpeed = 2500,
+        percentageAlive = 2,
+        gameTickSpeed = 250,
         iterations = 20;
 
-    function checkForLife(cell) {
+    function checkNeighborForLife(cell) {
         if (typeof cell === "undefined") return false;
 
         return cell.alive;
@@ -34,14 +34,14 @@
             bottomRight = cells['row-' + (row - 1) + '-column-' + (column + 1)],
             bottomLeft = cells['row-' + (row - 1) + '-column-' + (column - 1)];
 
-        if (checkForLife(top)) neighbors++;
-        if (checkForLife(topLeft)) neighbors++;
-        if (checkForLife(topRight)) neighbors++;
-        if (checkForLife(right)) neighbors++;
-        if (checkForLife(left)) neighbors++;
-        if (checkForLife(bottom)) neighbors++;
-        if (checkForLife(bottomRight)) neighbors++;
-        if (checkForLife(bottomLeft)) neighbors++;
+        if (checkNeighborForLife(top)) neighbors++;
+        if (checkNeighborForLife(topLeft)) neighbors++;
+        if (checkNeighborForLife(topRight)) neighbors++;
+        if (checkNeighborForLife(right)) neighbors++;
+        if (checkNeighborForLife(left)) neighbors++;
+        if (checkNeighborForLife(bottom)) neighbors++;
+        if (checkNeighborForLife(bottomRight)) neighbors++;
+        if (checkNeighborForLife(bottomLeft)) neighbors++;
 
         return neighbors;
     }
@@ -70,12 +70,18 @@
         ctx.canvas.height = canvasHeight;
     }
 
-    function createMoment() {
+    function checkForLife() {
         for (var cellId in cells) {
             var cell = cells[cellId];
 
             cell.neighbors = getLivingNeighbors(cell);
-            cell.alive = cell.neighbors === 2 || cell.neighbors === 3;
+            cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+        }
+
+        for (var cellId in cells) {
+            var cell = cells[cellId];
+
+            cell.alive = cell.willBeAlive;
         }
     }
 
@@ -105,19 +111,13 @@
     }
 
     function startTime() {
-        createMoment();
+        checkForLife();
         paintCanvas();
 
         setTimeout(startTime, gameTickSpeed);
     }
 
-    document.getElementById('manual-tick').addEventListener('click', function () {
-        createMoment();
-        paintCanvas();
-    });
-
     setCanvasSize();
     createCells();
-    //startTime();
-    paintCanvas();
+    startTime();
 })();
