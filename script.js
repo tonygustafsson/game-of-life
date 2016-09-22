@@ -1,12 +1,16 @@
 (function video() {
     "use strict";
 
-    var gameBoard = document.getElementById('game-board'),
+    var gameCanvas = document.getElementById('game-canvas'),
+        ctx = gameCanvas.getContext("2d"),
+        canvasWidth = Math.floor(window.innerWidth * 0.8),
+        canvasHeight = Math.floor(window.innerHeight * 0.8),
+        cellSize = 10,
         cells = [],
-        numberOfRows = 60,
-        numberOfColumns = 100,
-        percentageAlive = 10,
-        gameTickSpeed = 500,
+        numberOfRows = Math.floor(canvasHeight / cellSize),
+        numberOfColumns = Math.floor(canvasWidth / cellSize),
+        percentageAlive = 5,
+        gameTickSpeed = 2500,
         iterations = 20;
 
     function checkForLife(cell) {
@@ -15,12 +19,12 @@
         return cell.alive;
     }
 
-    function checkNumberOfLivingNeighbors(cell) {
+    function getLivingNeighbors(cell) {
         if (typeof cell === "undefined") return 0;
 
         var row = cell.row,
             column = cell.column,
-            numberOfLivingNeighbors = 0,
+            neighbors = 0,
             top = cells['row-' + (row + 1) + '-column-' + column],
             topRight = cells['row-' + (row + 1) + '-column-' + (column + 1)],
             topLeft = cells['row-' + (row + 1) + '-column-' + (column - 1)],
@@ -30,74 +34,23 @@
             bottomRight = cells['row-' + (row - 1) + '-column-' + (column + 1)],
             bottomLeft = cells['row-' + (row - 1) + '-column-' + (column - 1)];
 
-        if (checkForLife(top)) numberOfLivingNeighbors++;
-        if (checkForLife(topLeft)) numberOfLivingNeighbors++;
-        if (checkForLife(topRight)) numberOfLivingNeighbors++;
-        if (checkForLife(right)) numberOfLivingNeighbors++;
-        if (checkForLife(left)) numberOfLivingNeighbors++;
-        if (checkForLife(bottom)) numberOfLivingNeighbors++;
-        if (checkForLife(bottomRight)) numberOfLivingNeighbors++;
-        if (checkForLife(bottomLeft)) numberOfLivingNeighbors++;
+        if (checkForLife(top)) neighbors++;
+        if (checkForLife(topLeft)) neighbors++;
+        if (checkForLife(topRight)) neighbors++;
+        if (checkForLife(right)) neighbors++;
+        if (checkForLife(left)) neighbors++;
+        if (checkForLife(bottom)) neighbors++;
+        if (checkForLife(bottomRight)) neighbors++;
+        if (checkForLife(bottomLeft)) neighbors++;
 
-        return numberOfLivingNeighbors;
+        return neighbors;
     }
 
-    function startCellLife(cell) {
-        if (cell.iteration > iterations) return;
-
-        var numberOfLivingNeighbors = checkNumberOfLivingNeighbors(cell);
-
-        cell.iteration++;
-
-        if (typeof cell.element === "undefined") {
-            cell.element = document.getElementById(cell.id);
-        }
-
-        if (numberOfLivingNeighbors < 2) {
-            // Dies of lonelyness
-            cell.element.classList.remove("alive");
-            cell.alive = false;
-        }
-        else if (numberOfLivingNeighbors > 3) {
-            // Dies of overpopulation
-            cell.element.classList.remove("alive");
-            cell.alive = false;
-        }
-        else {
-            cell.element.classList.add("alive");
-
-            if (numberOfLivingNeighbors === 3) {
-                cell.element.classList.add("popular");
-            }
-            else {
-                cell.element.classList.remove("popular");
-            }
-
-            cell.alive = true;
-        }
-
-        setTimeout(function () {
-            startCellLife(cell);
-        }, gameTickSpeed + (Math.random() * gameTickSpeed / 2));
-    }
-
-    (function createBoard() {
+    function createCells() {
         for (var rowId = 0; rowId < numberOfRows; rowId = rowId + 1) {
-            var currentRow = document.createElement("tr");
-            currentRow.id = "row-" + rowId;
-
             for (var columnId = 0; columnId < numberOfColumns; columnId = columnId + 1) {
-                var currentColumn = document.createElement("td"),
-                    alive = Math.random() < (percentageAlive / 100),
+                var alive = Math.random() < (percentageAlive / 100),
                     id = "row-" + rowId + "-column-" + columnId;
-
-                currentColumn.id = id;
-
-                if (alive) {
-                    currentColumn.classList.add("alive");
-                }
-
-                currentRow.appendChild(currentColumn);
 
                 var cell = {
                     'id': id,
@@ -105,18 +58,66 @@
                     'column': columnId,
                     'iteration': 0,
                     'alive': alive
-                }
+                };
 
                 cells[cell.id] = cell;
-
-                setTimeout(function (thisCell) {
-                    return function () {
-                        startCellLife(thisCell);
-                    }
-                }(cell), gameTickSpeed + (Math.random() * gameTickSpeed / 2));
             }
-
-            gameBoard.appendChild(currentRow);
         }
-    })();
+    }
+
+    function setCanvasSize() {
+        ctx.canvas.width  = canvasWidth;
+        ctx.canvas.height = canvasHeight;
+    }
+
+    function createMoment() {
+        for (var cellId in cells) {
+            var cell = cells[cellId];
+
+            cell.neighbors = getLivingNeighbors(cell);
+            cell.alive = cell.neighbors === 2 || cell.neighbors === 3;
+        }
+    }
+
+    function getCellColor(cell) {
+        if (!cell.alive) {
+            return "#000";
+        }
+        else if (cell.neighbors === 3) {
+            return "#006040";
+        }
+        else {
+            return "green";
+        }
+    }
+
+    function paintCanvas() {
+        for (var cellId in cells) {
+            var cell = cells[cellId],
+                posX = Math.floor(cell.column * cellSize),
+                posY = Math.floor(cell.row * cellSize);
+
+            ctx.beginPath();
+            ctx.rect(posX, posY, cellSize, cellSize);
+            ctx.fillStyle = getCellColor(cell);
+            ctx.fill();
+        }
+    }
+
+    function startTime() {
+        createMoment();
+        paintCanvas();
+
+        setTimeout(startTime, gameTickSpeed);
+    }
+
+    document.getElementById('manual-tick').addEventListener('click', function () {
+        createMoment();
+        paintCanvas();
+    });
+
+    setCanvasSize();
+    createCells();
+    //startTime();
+    paintCanvas();
 })();

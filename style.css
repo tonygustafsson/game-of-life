@@ -3,32 +3,13 @@ html {
 }
 
 body {
-    font-family: 'Open Sans';
+    font-family: 'Verdana';
     color: #fff;
     background: #000;
 }
 
-table {
-    table-layout: fixed;
-}
-
-td {
-    width: 8px;
-    height: 8px;
-    border: 1px #3e3e3e solid;
-    background-color: #000;
-    border-radius: 1px;
-    margin: 0;
-    padding: 0;
-    transition: background-color 250ms;
-}
-
-td.alive {
-    background-color: green;
-}
-
-td.alive.popular {
-    background-color: #006040;
+.game-canvas {
+    border: 1px green solid;
 }
 
 footer {
