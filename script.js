@@ -1,7 +1,8 @@
 (function video() {
     "use strict";
-    
+
     var gameBoard = document.getElementById('game-board'),
+        cells = [],
         numberOfRows = 60,
         numberOfColumns = 100,
         percentageAlive = 10,
@@ -9,25 +10,25 @@
         iterations = 20;
 
     function checkForLife(cell) {
-        var alive = cell !== null && typeof cell.getAttribute("data-alive") !== "undefined" && cell.getAttribute("data-alive") === "true";
+        if (typeof cell === "undefined") return false;
 
-        return alive;
+        return cell.alive;
     }
 
     function checkNumberOfLivingNeighbors(cell) {
         if (typeof cell === "undefined") return 0;
 
-        var row = parseInt(cell.getAttribute('data-row'), 10),
-            column = parseInt(cell.getAttribute('data-column'), 10),
+        var row = cell.row,
+            column = cell.column,
             numberOfLivingNeighbors = 0,
-            top = document.getElementById('row-' + (row + 1) + '-column-' + column),
-            topRight = document.getElementById('row-' + (row + 1) + '-column-' + (column + 1)),
-            topLeft = document.getElementById('row-' + (row + 1) + '-column-' + (column - 1)),
-            right = document.getElementById('row-' + row + '-column-' + (column + 1)),
-            left = document.getElementById('row-' + row + '-column-' + (column - 1)),
-            bottom = document.getElementById('row-' + (row - 1) + '-column-' + column),
-            bottomRight = document.getElementById('row-' + (row - 1) + '-column-' + (column + 1)),
-            bottomLeft = document.getElementById('row-' + (row - 1) + '-column-' + (column - 1));
+            top = cells['row-' + (row + 1) + '-column-' + column],
+            topRight = cells['row-' + (row + 1) + '-column-' + (column + 1)],
+            topLeft = cells['row-' + (row + 1) + '-column-' + (column - 1)],
+            right = cells['row-' + row + '-column-' + (column + 1)],
+            left = cells['row-' + row + '-column-' + (column - 1)],
+            bottom = cells['row-' + (row - 1) + '-column-' + column],
+            bottomRight = cells['row-' + (row - 1) + '-column-' + (column + 1)],
+            bottomLeft = cells['row-' + (row - 1) + '-column-' + (column - 1)];
 
         if (checkForLife(top)) numberOfLivingNeighbors++;
         if (checkForLife(topLeft)) numberOfLivingNeighbors++;
@@ -42,32 +43,34 @@
     }
 
     function startCellLife(cell) {
-        var iteration = parseInt(cell.getAttribute("data-iteration"), 10);
-
-        if (iteration > iterations) return;
+        if (cell.iteration > iterations) return;
 
         var numberOfLivingNeighbors = checkNumberOfLivingNeighbors(cell);
 
-        cell.setAttribute('data-iteration', iteration + 1);
+        cell.iteration++;
+
+        if (typeof cell.element === "undefined") {
+            cell.element = document.getElementById(cell.id);
+        }
 
         if (numberOfLivingNeighbors < 2) {
             // Dies of lonelyness
-            cell.classList.remove("alive");
-            cell.setAttribute("data-alive", false);
+            cell.element.classList.remove("alive");
+            cell.alive = false;
         }
         else if (numberOfLivingNeighbors > 3) {
             // Dies of overpopulation
-            cell.classList.remove("alive");
-            cell.setAttribute("data-alive", false);
+            cell.element.classList.remove("alive");
+            cell.alive = false;
         }
         else {
-            cell.classList.add("alive");
-            cell.setAttribute("data-alive", true);
+            cell.element.classList.add("alive");
+            cell.alive = true;
         }
 
         setTimeout(function () {
-            startCellLife(cell);   
-        }, gameTickSpeed);
+            startCellLife(cell);
+        }, gameTickSpeed + (Math.random() * gameTickSpeed / 2));
     }
 
     (function createBoard() {
@@ -77,25 +80,32 @@
 
             for (var columnId = 0; columnId < numberOfColumns; columnId = columnId + 1) {
                 var currentColumn = document.createElement("td"),
-                    alive = Math.random() < (percentageAlive / 100);
+                    alive = Math.random() < (percentageAlive / 100),
+                    id = "row-" + rowId + "-column-" + columnId;
 
-                currentColumn.id = "row-" + rowId + "-column-" + columnId;
-                currentColumn.setAttribute('data-row', rowId);
-                currentColumn.setAttribute('data-column', columnId);
-                currentColumn.setAttribute('data-iteration', 0);
+                currentColumn.id = id;
 
                 if (alive) {
                     currentColumn.classList.add("alive");
-                    currentColumn.setAttribute("data-alive", true);
                 }
 
                 currentRow.appendChild(currentColumn);
 
-                setTimeout(function (thisColumn) {
+                var cell = {
+                    'id': id,
+                    'row': rowId,
+                    'column': columnId,
+                    'iteration': 0,
+                    'alive': alive
+                }
+
+                cells[cell.id] = cell;
+
+                setTimeout(function (thisCell) {
                     return function () {
-                        startCellLife(thisColumn);   
+                        startCellLife(thisCell);
                     }
-                }(currentColumn), gameTickSpeed); 
+                }(cell), gameTickSpeed + (Math.random() * gameTickSpeed / 2));
             }
 
             gameBoard.appendChild(currentRow);
