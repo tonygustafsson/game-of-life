@@ -27,6 +27,10 @@ td.alive {
     background-color: green;
 }
 
+td.alive.popular {
+    background-color: #006040;
+}
+
 footer {
     position: absolute;
     bottom: 10px;

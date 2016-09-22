@@ -65,6 +65,14 @@
         }
         else {
             cell.element.classList.add("alive");
+
+            if (numberOfLivingNeighbors === 3) {
+                cell.element.classList.add("popular");
+            }
+            else {
+                cell.element.classList.remove("popular");
+            }
+
             cell.alive = true;
         }
 
