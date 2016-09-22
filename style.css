@@ -1,0 +1,36 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Open Sans';
+    color: #fff;
+    background: #000;
+}
+
+table {
+    table-layout: fixed;
+}
+
+td {
+    width: 8px;
+    height: 8px;
+    border: 1px #3e3e3e solid;
+    background-color: #000;
+    border-radius: 1px;
+    margin: 0;
+    padding: 0;
+    transition: background-color 250ms;
+}
+
+td.alive {
+    background-color: green;
+}
+
+footer {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    text-shadow: 2px 2px 2px #000;
+    z-index: 2;
+}
