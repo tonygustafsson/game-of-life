@@ -9,8 +9,8 @@
         cells = [],
         numberOfRows = Math.floor(canvasHeight / cellSize),
         numberOfColumns = Math.floor(canvasWidth / cellSize),
-        percentageAlive = 2,
-        gameTickSpeed = 250,
+        percentageAlive = 8,
+        gameTickSpeed = 25,
         iterations = 20;
 
     function checkNeighborForLife(cell) {
@@ -76,6 +76,15 @@
 
             cell.neighbors = getLivingNeighbors(cell);
             cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+
+            if (cell.alive) {
+                // Only survive if it got 2-3 neighbors
+                cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+            }
+            else {
+                // Start life if 3 neighbors
+                cell.willBeAlive = cell.neighbors === 3;
+            }
         }
 
         for (var cellId in cells) {

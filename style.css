@@ -8,10 +8,6 @@ body {
     background: #000;
 }
 
-.game-canvas {
-    border: 1px green solid;
-}
-
 footer {
     position: absolute;
     bottom: 10px;
