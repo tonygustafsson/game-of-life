@@ -10,6 +10,9 @@
             this.context.canvas.height = this.height;
         },
         paint: function paintCanvas() {
+            // Clear all cells
+            this.context.clearRect(0,0,this.width, this.height);
+
             for (var cellId in cells) {
                 if (!cells.hasOwnProperty(cellId)) {
                     continue;
@@ -19,10 +22,15 @@
                     posX = Math.floor(cell.column * cellSize) - 1,
                     posY = Math.floor(cell.row * cellSize) - 1;
 
-                this.context.beginPath();
-                this.context.rect(posX, posY, cellSize - 1, cellSize - 1);
-                this.context.fillStyle = cell.getColor();
-                this.context.fill();
+                var color = cell.getColor();
+
+                if (color) {
+                    // Do not paint if dead cell
+                    this.context.beginPath();
+                    this.context.rect(posX, posY, cellSize - 1, cellSize - 1);
+                    this.context.fillStyle = color;
+                    this.context.fill();
+                }
             }
         }
     };
@@ -32,7 +40,7 @@
         numberOfRows = Math.floor(canvas.height / cellSize),
         numberOfColumns = Math.floor(canvas.width / cellSize),
         percentageAlive = 8,
-        gameTickSpeed = 10,
+        gameTickSpeed = 25,
         predictionMode = false;
 
     function createCells() {
@@ -84,7 +92,7 @@
                             return "#00ab71";
                         }
                         else if (!this.alive) {
-                            return "#000";
+                            return false;
                         }
                         else if (this.getNeighbors() === 3) {
                             return "#006040";
