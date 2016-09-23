@@ -19,8 +19,8 @@
                 }
 
                 var cell = cells[cellId],
-                    posX = Math.floor(cell.column * cellSize) - 1,
-                    posY = Math.floor(cell.row * cellSize) - 1;
+                    posX = Math.floor(cell.column * cellSize) + 1,
+                    posY = Math.floor(cell.row * cellSize) + 1;
 
                 var color = cell.getColor();
 
@@ -35,12 +35,12 @@
         }
     };
 
-    var cellSize = 10,
+    var cellSize = 6,
         cells = [],
         numberOfRows = Math.floor(canvas.height / cellSize),
         numberOfColumns = Math.floor(canvas.width / cellSize),
-        percentageAlive = 8,
-        gameTickSpeed = 25,
+        percentageAlive = 15,
+        gameTickSpeed = 35,
         predictionMode = false;
 
     function createCells() {
