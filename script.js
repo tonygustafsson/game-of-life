@@ -10,25 +10,22 @@
             this.context.canvas.height = this.height;
         },
         paint: function paintCanvas() {
-            this.context.strokeStyle = '#001100';
-
             for (var cellId in cells) {
                 if (!cells.hasOwnProperty(cellId)) {
                     continue;
                 }
 
                 var cell = cells[cellId],
-                    posX = Math.floor(cell.column * cellSize),
-                    posY = Math.floor(cell.row * cellSize);
+                    posX = Math.floor(cell.column * cellSize) - 1,
+                    posY = Math.floor(cell.row * cellSize) - 1;
 
                 this.context.beginPath();
-                this.context.rect(posX, posY, cellSize, cellSize);
-                this.context.stroke();
+                this.context.rect(posX, posY, cellSize - 1, cellSize - 1);
                 this.context.fillStyle = cell.getColor();
                 this.context.fill();
             }
         }
-    }
+    };
 
     var cellSize = 10,
         cells = [],
