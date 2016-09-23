@@ -18,81 +18,71 @@
         ctx.canvas.height = canvasHeight;
     }
 
-    function isNeighborAlive(cell) {
-        if (typeof cell === "undefined") return false;
-
-        return cell.alive;
-    }
-
-    function getLivingNeighbors(cell) {
-        if (typeof cell === "undefined") return 0;
-
-        var row = cell.row,
-            column = cell.column,
-            neighbors = 0,
-            top = cells['row-' + (row + 1) + '-column-' + column],
-            topRight = cells['row-' + (row + 1) + '-column-' + (column + 1)],
-            topLeft = cells['row-' + (row + 1) + '-column-' + (column - 1)],
-            right = cells['row-' + row + '-column-' + (column + 1)],
-            left = cells['row-' + row + '-column-' + (column - 1)],
-            bottom = cells['row-' + (row - 1) + '-column-' + column],
-            bottomRight = cells['row-' + (row - 1) + '-column-' + (column + 1)],
-            bottomLeft = cells['row-' + (row - 1) + '-column-' + (column - 1)];
-
-        if (isNeighborAlive(top)) neighbors++;
-        if (isNeighborAlive(topLeft)) neighbors++;
-        if (isNeighborAlive(topRight)) neighbors++;
-        if (isNeighborAlive(right)) neighbors++;
-        if (isNeighborAlive(left)) neighbors++;
-        if (isNeighborAlive(bottom)) neighbors++;
-        if (isNeighborAlive(bottomRight)) neighbors++;
-        if (isNeighborAlive(bottomLeft)) neighbors++;
-
-        return neighbors;
-    }
-
     function createCells() {
-        var numberOfCells = 0;
-
         for (var rowId = 0; rowId < numberOfRows; rowId = rowId + 1) {
             for (var columnId = 0; columnId < numberOfColumns; columnId = columnId + 1) {
-                var alive = Math.random() < (percentageAlive / 100),
-                    id = "row-" + rowId + "-column-" + columnId;
+                var alive = Math.random() < (percentageAlive / 100);
 
                 var cell = {
-                    'id': id,
                     'row': rowId,
                     'column': columnId,
                     'alive': alive,
-                    'willBeAlive': alive
+                    'willBeAlive': alive,
+                    'getNeighbors': function getNeighbors() {
+                        var neighbors = 0,
+                            position = (this.row * numberOfColumns) + this.column,
+                            top = cells[position - numberOfColumns],
+                            topRight = cells[position - (numberOfColumns - 1)],
+                            topLeft = cells[position - (numberOfColumns + 1)],
+                            right = cells[position + 1],
+                            left = cells[position - 1],
+                            bottom = cells[position + numberOfColumns],
+                            bottomRight = cells[position + (numberOfColumns - 1)],
+                            bottomLeft = cells[position + (numberOfColumns + 1)];
+
+                        function isNeighborAlive(cell) {
+                            if (typeof cell === "undefined") return false;
+
+                            return cell.alive;
+                        }
+
+                        if (isNeighborAlive(top)) neighbors++;
+                        if (isNeighborAlive(topLeft)) neighbors++;
+                        if (isNeighborAlive(topRight)) neighbors++;
+                        if (isNeighborAlive(right)) neighbors++;
+                        if (isNeighborAlive(left)) neighbors++;
+                        if (isNeighborAlive(bottom)) neighbors++;
+                        if (isNeighborAlive(bottomRight)) neighbors++;
+                        if (isNeighborAlive(bottomLeft)) neighbors++;
+
+                        return neighbors;
+                    },
+                    'getColor': function getColor() {
+                        if (this.alive && !this.willBeAlive) {
+                            // Dying
+                            return "#b7542c";
+                        }
+                        else if (!this.alive && this.willBeAlive) {
+                            // New cell
+                            return "#00ab71";
+                        }
+                        else if (!this.alive) {
+                            return "#000";
+                        }
+                        else if (this.getNeighbors() === 3) {
+                            return "#006040";
+                        }
+                        else {
+                            return "green";
+                        }
+                    }
                 };
 
-                cells[cell.id] = cell;
-                numberOfCells++;
+                cells.push(cell);
             }
         }
 
-        console.log('Created ' + numberOfCells + ' cells.');
-    }
-
-    function getCellColor(cell) {
-        if (cell.alive && !cell.willBeAlive) {
-            // Dying
-            return "#b7542c";
-        }
-        else if (!cell.alive && cell.willBeAlive) {
-            // New cell
-            return "#00ab71";
-        }
-        else if (!cell.alive) {
-            return "#000";
-        }
-        else if (cell.neighbors === 3) {
-            return "#006040";
-        }
-        else {
-            return "green";
-        }
+        console.log('Created ' + cells.length + ' cells.');
     }
 
     function checkForFutureLife() {
@@ -105,16 +95,15 @@
 
             cell = cells[cellId];
 
-            cell.neighbors = getLivingNeighbors(cell);
-            cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+            cell.willBeAlive = cell.getNeighbors() === 2 || cell.getNeighbors() === 3;
 
             if (cell.alive) {
                 // Only survive if it got 2-3 neighbors
-                cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+                cell.willBeAlive = cell.getNeighbors() === 2 || cell.getNeighbors() === 3;
             }
             else {
                 // Start life if 3 neighbors
-                cell.willBeAlive = cell.neighbors === 3;
+                cell.willBeAlive = cell.getNeighbors() === 3;
             }
         }
     }
@@ -148,7 +137,7 @@
             ctx.beginPath();
             ctx.rect(posX, posY, cellSize, cellSize);
             ctx.stroke();
-            ctx.fillStyle = getCellColor(cell);
+            ctx.fillStyle = cell.getColor();
             ctx.fill();
         }
     }
