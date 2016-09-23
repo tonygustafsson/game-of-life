@@ -1,22 +1,42 @@
 (function gameOfLife() {
     "use strict";
 
-    var gameCanvas = document.getElementById('game-canvas'),
-        ctx = gameCanvas.getContext("2d"),
-        canvasWidth = Math.floor(window.innerWidth * 0.95),
-        canvasHeight = Math.floor(window.innerHeight * 0.8),
-        cellSize = 10,
+    var canvas = {
+        context: document.getElementById('game-canvas').getContext("2d"),
+        width: Math.floor(window.innerWidth * 0.95),
+        height: Math.floor(window.innerHeight * 0.8),
+        init: function initCanvas() {
+            this.context.canvas.width  = this.width;
+            this.context.canvas.height = this.height;
+        },
+        paint: function paintCanvas() {
+            this.context.strokeStyle = '#001100';
+
+            for (var cellId in cells) {
+                if (!cells.hasOwnProperty(cellId)) {
+                    continue;
+                }
+
+                var cell = cells[cellId],
+                    posX = Math.floor(cell.column * cellSize),
+                    posY = Math.floor(cell.row * cellSize);
+
+                this.context.beginPath();
+                this.context.rect(posX, posY, cellSize, cellSize);
+                this.context.stroke();
+                this.context.fillStyle = cell.getColor();
+                this.context.fill();
+            }
+        }
+    }
+
+    var cellSize = 10,
         cells = [],
-        numberOfRows = Math.floor(canvasHeight / cellSize),
-        numberOfColumns = Math.floor(canvasWidth / cellSize),
+        numberOfRows = Math.floor(canvas.height / cellSize),
+        numberOfColumns = Math.floor(canvas.width / cellSize),
         percentageAlive = 8,
         gameTickSpeed = 10,
         predictionMode = false;
-
-    function setCanvasSize() {
-        ctx.canvas.width  = canvasWidth;
-        ctx.canvas.height = canvasHeight;
-    }
 
     function createCells() {
         for (var rowId = 0; rowId < numberOfRows; rowId = rowId + 1) {
@@ -122,26 +142,6 @@
         }
     }
 
-    function paintCanvas() {
-        ctx.strokeStyle = '#001100';
-
-        for (var cellId in cells) {
-            if (!cells.hasOwnProperty(cellId)) {
-                continue;
-            }
-
-            var cell = cells[cellId],
-                posX = Math.floor(cell.column * cellSize),
-                posY = Math.floor(cell.row * cellSize);
-
-            ctx.beginPath();
-            ctx.rect(posX, posY, cellSize, cellSize);
-            ctx.stroke();
-            ctx.fillStyle = cell.getColor();
-            ctx.fill();
-        }
-    }
-
     function startLife() {
         var performanceStart = performance.now();
 
@@ -154,7 +154,7 @@
 
         var performanceAfterLife = performance.now();
 
-        paintCanvas();
+        canvas.paint();
 
         var performanceAfterPaint = performance.now();
 
@@ -166,7 +166,7 @@
         setTimeout(startLife, gameTickSpeed);
     }
 
-    setCanvasSize();
+    canvas.init();
     createCells();
     startLife();
 })();
