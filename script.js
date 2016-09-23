@@ -10,7 +10,8 @@
         numberOfRows = Math.floor(canvasHeight / cellSize),
         numberOfColumns = Math.floor(canvasWidth / cellSize),
         percentageAlive = 8,
-        gameTickSpeed = 15;
+        gameTickSpeed = 10,
+        predictionMode = false;
 
     function setCanvasSize() {
         ctx.canvas.width  = canvasWidth;
@@ -51,6 +52,8 @@
     }
 
     function createCells() {
+        var numberOfCells = 0;
+
         for (var rowId = 0; rowId < numberOfRows; rowId = rowId + 1) {
             for (var columnId = 0; columnId < numberOfColumns; columnId = columnId + 1) {
                 var alive = Math.random() < (percentageAlive / 100),
@@ -65,8 +68,11 @@
                 };
 
                 cells[cell.id] = cell;
+                numberOfCells++;
             }
         }
+
+        console.log('Created ' + numberOfCells + ' cells.');
     }
 
     function getCellColor(cell) {
@@ -90,13 +96,9 @@
     }
 
     function checkForFutureLife() {
-        var cellId,
-            cell;
-        
-        for (cellId in cells) {
-            // First loop checks which cells will be alive
-            // Cannot change state at the same time because surrounding cells will be changed before
+        var cellId, cell;
 
+        for (cellId in cells) {
             if (!cells.hasOwnProperty(cellId)) {
                 continue;
             }
@@ -118,12 +120,9 @@
     }
 
     function checkForLife() {
-        var cellId,
-            cell;
+        var cellId, cell;
 
         for (cellId in cells) {
-            // Second loop actually kills cells
-
             if (!cells.hasOwnProperty(cellId)) {
                 continue;
             }
@@ -135,6 +134,8 @@
     }
 
     function paintCanvas() {
+        ctx.strokeStyle = '#001100';
+
         for (var cellId in cells) {
             if (!cells.hasOwnProperty(cellId)) {
                 continue;
@@ -145,24 +146,34 @@
                 posY = Math.floor(cell.row * cellSize);
 
             ctx.beginPath();
-            ctx.arc(posX, posY, cellSize / 2, 0, 2 * Math.PI, false);
+            ctx.rect(posX, posY, cellSize, cellSize);
+            ctx.stroke();
             ctx.fillStyle = getCellColor(cell);
             ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = '#001100';
-            ctx.stroke();
         }
     }
 
     function startLife() {
-        checkForLife();
+        var performanceStart = performance.now();
+
+        if (predictionMode) {
+            checkForFutureLife();
+        }
+        else {
+            checkForLife();
+        }
+
+        var performanceAfterLife = performance.now();
+
         paintCanvas();
 
-        setTimeout(function () {
-            checkForFutureLife();
-            paintCanvas();
-        }, gameTickSpeed * 2);
+        var performanceAfterPaint = performance.now();
 
+        var lifeChangeString = predictionMode ? "Predict life took: " : "Change life took: ";
+        console.log(lifeChangeString + Math.floor(performanceAfterLife - performanceStart) + ' ms');
+        console.log('Paint took: ' + Math.floor(performanceAfterPaint - performanceAfterLife) + ' ms');
+
+        predictionMode = !predictionMode;
         setTimeout(startLife, gameTickSpeed);
     }
 
