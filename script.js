@@ -9,38 +9,32 @@
         percentageAlive: 15,
         gameTickSpeed: 35,
         predictionMode: false,
+        iterations: 0,
         init: function init() {
             game.numberOfRows = Math.floor(game.canvas.height / game.cellSize);
             game.numberOfColumns = Math.floor(game.canvas.width / game.cellSize);
+
+            game.statistics.init();
             game.cells = game.createCells();
-
-            console.log('Created ' + game.cells.length + ' cells on ' + game.numberOfRows + ' rows and ' + game.numberOfColumns + ' columns');
-
             game.canvas.init();
 
             game.runLife();
         },
         runLife: function runLife() {
-            var performanceStart = performance.now();
-
             if (game.predictionMode) {
-                game.checkForFutureLife();
+                game.predictCellStates();
             }
             else {
-                game.checkForLife();
+                game.changeCellStates();
             }
 
-            var performanceAfterLife = performance.now();
+            game.predictionMode = !game.predictionMode;
 
             game.canvas.paint();
 
-            var performanceAfterPaint = performance.now();
+            game.statistics.changeIterationsCount(game.iterations);
+            game.iterations++;
 
-            var lifeChangeString = game.predictionMode ? "Predict life took: " : "Change life took: ";
-            console.log(lifeChangeString + Math.floor(performanceAfterLife - performanceStart) + ' ms');
-            console.log('Paint took: ' + Math.floor(performanceAfterPaint - performanceAfterLife) + ' ms');
-
-            game.predictionMode = !game.predictionMode;
             setTimeout(game.runLife, game.gameTickSpeed);
         },
         createCell: function createCell(rowId, columnId, alive) {
@@ -75,30 +69,27 @@
                 getPaintSettings: function getColor() {
                     var cell = this;
 
-                    if (cell.alive && !cell.willBeAlive) {
-                        // Dying
-                        return {
-                            color: "rgb(182,84,44)"
-                        };
-                    }
-                    else if (!cell.alive && cell.willBeAlive) {
-                        // New cell
-                        return {
-                            color: "rgb(0,171,133)"
-                        };
-                    }
-                    else if (!cell.alive) {
-                        return false;
-                    }
-                    else if (cell.getNeighbors() === 3) {
-                        return {
-                            color: "#006040"
-                        };
+                    if (cell.alive) {
+                        // Living
+                        if (!cell.willBeAlive) {
+                            // Dying
+                            return { color: "rgb(182,84,44)" };
+                        }
+                        else if (cell.getNeighbors() === 3) {
+                            // Popular
+                            return { color: "#006040" };
+                        }
+
+                        return { color: "green" };
                     }
                     else {
-                        return {
-                            color: "green"
-                        };
+                        // Dead
+                        if (cell.willBeAlive) {
+                            // New cell
+                            return { color: "rgb(0,171,133)" };
+                        }
+
+                        return false;
                     }
                 }
             };
@@ -117,9 +108,15 @@
                 }
             }
 
+            game.statistics.changeCellsCount(cells.length);
+
             return cells;
         },
-        checkForFutureLife: function checkForFutureLife() {
+        predictCellStates: function predictCellStates() {
+            var livingCells = 0;
+
+            var performanceStart = performance.now();
+
             for (var cellId in game.cells) {
                 if (!game.cells.hasOwnProperty(cellId)) {
                     continue;
@@ -127,19 +124,21 @@
 
                 var cell = game.cells[cellId];
 
-                cell.willBeAlive = cell.getNeighbors() === 2 || cell.getNeighbors() === 3;
-
                 if (cell.alive) {
                     // Only survive if it got 2-3 neighbors
                     cell.willBeAlive = cell.getNeighbors() === 2 || cell.getNeighbors() === 3;
+                    livingCells++;
                 }
                 else {
                     // Start life if 3 neighbors
                     cell.willBeAlive = cell.getNeighbors() === 3;
                 }
             }
+
+            game.statistics.changeLivingCellsCount(livingCells);
+            game.statistics.changeLifeCalcSpeed(performance.now() - performanceStart);
         },
-        checkForLife: function checkForLife() {
+        changeCellStates: function changeCellStates() {
             for (var cellId in game.cells) {
                 if (!game.cells.hasOwnProperty(cellId)) {
                     continue;
@@ -163,6 +162,8 @@
             paint: function paintCanvas() {
                 var canvas = this;
 
+                var performanceStart = performance.now();
+
                 // Clear all cells
                 canvas.context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -185,6 +186,72 @@
                         canvas.context.fill();
                     }
                 }
+
+                game.statistics.changePaintSpeed(performance.now() - performanceStart);
+            }
+        },
+        statistics: {
+            numberOfCellsElement: null,
+            numberOfLivingCellsElement: null,
+            numberOfIterationsElement: null,
+            paintSpeedElement: null,
+            lifeCalcSpeedElement: null,
+            paintSpeeds: [],
+            lifeCalcSpeeds: [],
+            init: function init () {
+                var statistics = this;
+
+                statistics.numberOfCellsElement = document.getElementById('numberOfCells');
+                statistics.numberOfLivingCellsElement = document.getElementById('numberOfLivingCells');
+                statistics.numberOfIterationsElement = document.getElementById('numberOfIterations');
+                statistics.paintSpeedElement = document.getElementById('paintSpeed');
+                statistics.lifeCalcSpeedElement = document.getElementById('lifeCalcSpeed');
+            },
+            changeCellsCount: function changeCellsCount (numberOfCells) {
+                var statistics = this;
+                statistics.numberOfCellsElement.innerText = numberOfCells;
+            },
+            changeLivingCellsCount: function changeLivingCellsCount (numberOfLivingCells) {
+                var statistics = this;
+                statistics.numberOfLivingCellsElement.innerText = numberOfLivingCells;
+            },
+            changeIterationsCount: function changeIterationsCount (numberOfIterations) {
+                var statistics = this;
+                statistics.numberOfIterationsElement.innerText = numberOfIterations;
+            },
+            changePaintSpeed: function changePaintSpeed (paintSpeed) {
+                var statistics = this,
+                    totalPaintSpeed = 0,
+                    maxNumberOfPaintSpeeds = 20;
+
+                if (statistics.paintSpeeds.length > maxNumberOfPaintSpeeds - 1) {
+                    statistics.paintSpeeds.shift();
+                }
+
+                statistics.paintSpeeds.push(paintSpeed);
+
+                for (var i = 0; i < statistics.paintSpeeds.length; i++) {
+                    totalPaintSpeed = totalPaintSpeed + statistics.paintSpeeds[i];
+                }
+
+                statistics.paintSpeedElement.innerText = Math.floor(totalPaintSpeed / statistics.paintSpeeds.length);
+            },
+           changeLifeCalcSpeed: function changeLifeCalcSpeed (lifeCalcSpeed) {
+                var statistics = this,
+                    totalLifeCalcSpeed = 0,
+                    maxNumberOfLifeCalcSpeeds = 20;
+
+                if (statistics.lifeCalcSpeeds.length > maxNumberOfLifeCalcSpeeds - 1) {
+                    statistics.lifeCalcSpeeds.shift();
+                }
+
+                statistics.lifeCalcSpeeds.push(lifeCalcSpeed);
+
+                for (var i = 0; i < statistics.lifeCalcSpeeds.length; i++) {
+                    totalLifeCalcSpeed = totalLifeCalcSpeed + statistics.lifeCalcSpeeds[i];
+                }
+
+                statistics.lifeCalcSpeedElement.innerText = Math.floor(totalLifeCalcSpeed / statistics.lifeCalcSpeeds.length);
             }
         }
     };

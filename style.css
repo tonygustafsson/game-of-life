@@ -26,9 +26,6 @@ h1 {
 }
 
 footer {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    text-shadow: 2px 2px 2px #000;
-    z-index: 2;
+    width: 95%;
+    margin: 0 2.5%;
 }
