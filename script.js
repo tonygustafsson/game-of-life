@@ -52,8 +52,8 @@
                         right = game.cells[position + 1],
                         left = game.cells[position - 1],
                         bottom = game.cells[position + game.numberOfColumns],
-                        bottomRight = game.cells[position + (game.numberOfColumns - 1)],
-                        bottomLeft = game.cells[position + (game.numberOfColumns + 1)];
+                        bottomRight = game.cells[position + (game.numberOfColumns + 1)],
+                        bottomLeft = game.cells[position + (game.numberOfColumns - 1)];
 
                     if (typeof top !== "undefined" && top.alive) neighbors++;
                     if (typeof topLeft !== "undefined" && topLeft.alive) neighbors++;
@@ -99,8 +99,8 @@
         createCells: function createCells() {
             var cells = [];
 
-            for (var rowId = 0; rowId < game.numberOfRows; rowId = rowId + 1) {
-                for (var columnId = 0; columnId < game.numberOfColumns; columnId = columnId + 1) {
+            for (var rowId = 0; rowId < game.numberOfRows; rowId++) {
+                for (var columnId = 0; columnId < game.numberOfColumns; columnId++) {
                     var alive = Math.random() < (game.percentageAlive / 100);
 
                     var cell = game.createCell(rowId, columnId, alive);
@@ -122,16 +122,17 @@
                     continue;
                 }
 
-                var cell = game.cells[cellId];
+                var cell = game.cells[cellId],
+                    neighbors = cell.getNeighbors();
 
                 if (cell.alive) {
                     // Only survive if it got 2-3 neighbors
-                    cell.willBeAlive = cell.getNeighbors() === 2 || cell.getNeighbors() === 3;
+                    cell.willBeAlive = neighbors === 2 || neighbors === 3;
                     livingCells++;
                 }
                 else {
                     // Start life if 3 neighbors
-                    cell.willBeAlive = cell.getNeighbors() === 3;
+                    cell.willBeAlive = neighbors === 3;
                 }
             }
 
