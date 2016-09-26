@@ -10,17 +10,21 @@
         gameTickSpeed: 35,
         predictionMode: false,
         iterations: 0,
+        lifeTimer: null,
         init: function init() {
+            var game = this;
+
             game.numberOfRows = Math.floor(game.canvas.height / game.cellSize);
             game.numberOfColumns = Math.floor(game.canvas.width / game.cellSize);
 
+            game.controls.init();
             game.statistics.init();
             game.cells = game.createCells();
             game.canvas.init();
 
             game.runLife();
         },
-        runLife: function runLife() {
+        createLifeTick: function createLifeTick () {
             if (game.predictionMode) {
                 game.predictCellStates();
             }
@@ -34,8 +38,10 @@
 
             game.statistics.changeIterationsCount(game.iterations);
             game.iterations++;
-
-            setTimeout(game.runLife, game.gameTickSpeed);
+        },
+        runLife: function runLife() {
+            game.createLifeTick();
+            game.lifeTimer = setTimeout(game.runLife, game.gameTickSpeed);
         },
         createCell: function createCell(rowId, columnId, alive) {
             var cell = {
@@ -189,6 +195,61 @@
                 }
 
                 game.statistics.changePaintSpeed(performance.now() - performanceStart);
+            }
+        },
+        controls: {
+            init: function init () {
+                var controls = this;
+
+                document.getElementById('toggleLife').addEventListener('click', controls.toggleLife);
+                document.getElementById('nextLifeTick').addEventListener('click', controls.nextLifeTick);
+                document.getElementById('gameTickSpeedSelector').addEventListener('change', controls.changeTickSpeed);
+                document.getElementById('gameCellSizeSelector').addEventListener('change', controls.changeCellSize);
+                document.getElementById('gamePercentageAliveSelector').addEventListener('change', controls.changePercentageAlive);
+            },
+            start: function start () {
+                game.runLife();
+
+                document.getElementById('toggleLife').innerText = "Pause";
+            },
+            pause: function pause () {
+                clearTimeout(game.lifeTimer);
+                game.lifeTimer = null;
+
+                document.getElementById('toggleLife').innerText = "Start";
+            },
+            toggleLife: function toggleLife () {
+                if (game.lifeTimer === null) {
+                    game.controls.start();
+                }
+                else {
+                    game.controls.pause();
+                }
+            },
+            nextLifeTick: function nextLifeTick () {
+                game.controls.pause();
+
+                game.createLifeTick();
+            },
+            changeTickSpeed: function changeTickSpeed () {
+                var gameTickSpeedSelector = this,
+                    tickSpeed = parseInt(gameTickSpeedSelector.options[gameTickSpeedSelector.selectedIndex].value, 10);
+
+                game.gameTickSpeed = tickSpeed;
+            },
+            changeCellSize: function changeCellSize () {
+                var gameCellSizeSelector = this,
+                    cellSize = parseInt(gameCellSizeSelector.options[gameCellSizeSelector.selectedIndex].value, 10);
+
+                game.cellSize = cellSize;
+                game.init();
+            },
+            changePercentageAlive: function changePercentageAlive () {
+                var gamePercentageAliveSelector = this,
+                    percentageAlive = parseInt(gamePercentageAliveSelector.options[gamePercentageAliveSelector.selectedIndex].value, 10);
+
+                game.percentageAlive = percentageAlive;
+                game.init();
             }
         },
         statistics: {
