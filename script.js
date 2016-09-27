@@ -203,9 +203,12 @@
 
                 document.getElementById('toggleLife').addEventListener('click', controls.toggleLife);
                 document.getElementById('nextLifeTick').addEventListener('click', controls.nextLifeTick);
+                document.getElementById('reset').addEventListener('click', controls.reset);
                 document.getElementById('gameTickSpeedSelector').addEventListener('change', controls.changeTickSpeed);
                 document.getElementById('gameCellSizeSelector').addEventListener('change', controls.changeCellSize);
                 document.getElementById('gamePercentageAliveSelector').addEventListener('change', controls.changePercentageAlive);
+
+                document.getElementById('toggleLife').innerText = "Pause";
             },
             start: function start () {
                 game.runLife();
@@ -217,6 +220,9 @@
                 game.lifeTimer = null;
 
                 document.getElementById('toggleLife').innerText = "Start";
+            },
+            reset: function reset () {
+                game.init();
             },
             toggleLife: function toggleLife () {
                 if (game.lifeTimer === null) {
