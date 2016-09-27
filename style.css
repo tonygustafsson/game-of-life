@@ -29,7 +29,34 @@ a {
     -ms-interpolation-mode: nearest-neighbor;
 }
 
-footer {
+.controls {
     width: 95%;
     margin: 0 2.5%;
+}
+
+.description {
+    width: 95%;
+    margin: 4em 2.5%;
+}
+
+.cell-example {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+}
+
+.cell-example-alive {
+    background: green;
+}
+
+.cell-example-popular {
+    background: #006040;
+}
+
+.cell-example-new {
+    background: rgb(0,171,133);
+}
+
+.cell-example-dying {
+    background: rgb(182,84,44);
 }
