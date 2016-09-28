@@ -10,3 +10,6 @@ It's a demonstration of how simple rules can create complex patterns.
 
 ## Code
 This is written in JavaScript, mostly as an experiment with Canvas element and JavaScript performance.
+
+## Demo
+[Try it out](http://www.tonyg.se/projects/game-of-life/)
