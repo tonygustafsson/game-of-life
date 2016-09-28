@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 
 		<link rel="stylesheet" type="text/css" media="all" href="style.css">
 
@@ -62,7 +60,7 @@
 				Alive %: <select id="gamePercentageAliveSelector">
 					<option value="1">1 %</option>
 					<option value="2">2 %</option>
-					<option value="6" selected>6 %</option>
+					<option value="6">6 %</option>
 					<option value="8">8 %</option>
 					<option value="10">10 %</option>
 					<option value="12">12 %</option>
@@ -80,10 +78,11 @@
 		<div class="description">
 			<h2>What is this?</h2>
 
-			<p>This is an implementation of the famous <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
+			<p>This is a JavaScript implementation of the famous <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
 			It's a demonstration of how simple rules can create complex patterns.</p>
 
-			<p>The rules are simple:</p>
+			<h3>Rules</h3>
+
 			<ol>
 				<li>Any live cell with fewer than two live neighbours dies, as if caused by under-population.</li>
 				<li>Any live cell with two or three live neighbours lives on to the next generation.</li>
