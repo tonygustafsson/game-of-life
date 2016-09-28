@@ -68,3 +68,10 @@ a {
 .cell-example-dying {
     background: #b6542c;
 }
+
+.logo {
+    display: block;
+    width: 250px;
+    max-width: 100%;
+    margin: 0 auto;
+}
