@@ -46,7 +46,7 @@ a {
 }
 
 .cell-example-alive {
-    background: green;
+    background: #008000;
 }
 
 .cell-example-popular {
@@ -54,9 +54,9 @@ a {
 }
 
 .cell-example-new {
-    background: rgb(0,171,133);
+    background: #0057aa;
 }
 
 .cell-example-dying {
-    background: rgb(182,84,44);
+    background: #b6542c;
 }

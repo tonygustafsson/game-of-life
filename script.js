@@ -29,6 +29,14 @@
             game.cells = game.createCells();
             game.canvas.init();
 
+            // Reset some stuff if the game is restarted
+            game.generation = 0;
+            
+            if (game.lifeTimer !== null) {
+                clearTimeout(game.lifeTimer);
+                game.lifeTimer = null;
+            }
+
             // Let's start the timer and get some life going
             game.runLife();
         },
