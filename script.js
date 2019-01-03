@@ -4,7 +4,7 @@
 */
 
 (function gameOfLife() {
-    "use strict";
+    'use strict';
 
     var game = {
         cellSize: 6,
@@ -27,11 +27,11 @@
             game.controls.init();
             game.statistics.init();
             game.cells = game.createCells();
-            game.canvas.init();
+            game.canvas.init(game.cells, game.statistics, game.cellSize);
 
             // Reset some stuff if the game is restarted
             game.generation = 0;
-            
+
             if (game.lifeTimer !== null) {
                 clearTimeout(game.lifeTimer);
                 game.lifeTimer = null;
@@ -44,16 +44,16 @@
             /* Keeps track of timer, makes the cells evolve automatically */
 
             game.evolve();
+
             game.lifeTimer = setTimeout(game.runLife, game.generationSpeed);
         },
-        evolve: function evolve () {
+        evolve: function evolve() {
             /* Calculates which cells will be alive or dead */
 
             if (game.predictionMode) {
                 // Only predict the changes, so we can mark cells as new or dying
                 game.predictCellStates();
-            }
-            else {
+            } else {
                 // Actually move cells in memory
                 game.changeCellStates();
             }
@@ -79,7 +79,7 @@
                 getNeighbors: function getNeighbors() {
                     /* Check how many neighbors are alive for this cell */
                     var neighbors = 0,
-                        position = (cell.row * game.numberOfColumns) + cell.column,
+                        position = cell.row * game.numberOfColumns + cell.column,
                         top = game.cells[position - game.numberOfColumns],
                         topRight = game.cells[position - (game.numberOfColumns - 1)],
                         topLeft = game.cells[position - (game.numberOfColumns + 1)],
@@ -89,14 +89,14 @@
                         bottomRight = game.cells[position + (game.numberOfColumns + 1)],
                         bottomLeft = game.cells[position + (game.numberOfColumns - 1)];
 
-                    if (typeof top !== "undefined" && top.alive) neighbors++;
-                    if (typeof topLeft !== "undefined" && topLeft.alive) neighbors++;
-                    if (typeof topRight !== "undefined" && topRight.alive) neighbors++;
-                    if (typeof right !== "undefined" && right.alive) neighbors++;
-                    if (typeof left !== "undefined" && left.alive) neighbors++;
-                    if (typeof bottom !== "undefined" && bottom.alive) neighbors++;
-                    if (typeof bottomRight !== "undefined" && bottomRight.alive) neighbors++;
-                    if (typeof bottomLeft !== "undefined" && bottomLeft.alive) neighbors++;
+                    if (typeof top !== 'undefined' && top.alive) neighbors++;
+                    if (typeof topLeft !== 'undefined' && topLeft.alive) neighbors++;
+                    if (typeof topRight !== 'undefined' && topRight.alive) neighbors++;
+                    if (typeof right !== 'undefined' && right.alive) neighbors++;
+                    if (typeof left !== 'undefined' && left.alive) neighbors++;
+                    if (typeof bottom !== 'undefined' && bottom.alive) neighbors++;
+                    if (typeof bottomRight !== 'undefined' && bottomRight.alive) neighbors++;
+                    if (typeof bottomLeft !== 'undefined' && bottomLeft.alive) neighbors++;
 
                     return neighbors;
                 },
@@ -105,10 +105,14 @@
 
                     var cell = this;
 
-                    if (cell.alive && !cell.willBeAlive) return "#b6542c"; // Dying cell
-                    else if (cell.alive && cell.getNeighbors() === 3) return "#006040"; // Popular cell
-                    else if (cell.alive) return "#008000"; // Alive
-                    else if (!cell.alive && cell.willBeAlive) return "#0057aa"; // New cell
+                    if (cell.alive && !cell.willBeAlive) return '#b6542c';
+                    // Dying cell
+                    else if (cell.alive && cell.getNeighbors() === 3) return '#006040';
+                    // Popular cell
+                    else if (cell.alive) return '#008000';
+                    // Alive
+                    else if (!cell.alive && cell.willBeAlive) return '#0057aa';
+                    // New cell
                     else return false; // Dead, do not paint
                 }
             };
@@ -124,7 +128,7 @@
             for (var rowId = 0; rowId < game.numberOfRows; rowId++) {
                 for (var columnId = 0; columnId < game.numberOfColumns; columnId++) {
                     // Check if it's initially dead or alive
-                    var alive = Math.random() < (game.percentageAlive / 100);
+                    var alive = Math.random() < game.percentageAlive / 100;
 
                     // Create the cell and add it to an array
                     var cell = game.createCell(rowId, columnId, alive);
@@ -161,8 +165,7 @@
                     // Only survive if it got 2-3 neighbors
                     cell.willBeAlive = neighbors === 2 || neighbors === 3;
                     livingCells++;
-                }
-                else {
+                } else {
                     // Create new cell if 3 neighbors
                     cell.willBeAlive = neighbors === 3;
                 }
@@ -186,7 +189,7 @@
             }
         },
         canvas: {
-            context: document.getElementById('game-canvas').getContext("2d"),
+            context: document.getElementById('game-canvas').getContext('2d'),
             width: Math.floor(window.innerWidth * 0.95),
             height: Math.floor(window.innerHeight * 0.8),
             init: function initCanvas() {
@@ -194,7 +197,7 @@
 
                 var canvas = this;
 
-                game.canvas.context.canvas.width  = canvas.width;
+                game.canvas.context.canvas.width = canvas.width;
                 game.canvas.context.canvas.height = canvas.height;
             },
             paint: function paintCanvas() {
@@ -236,7 +239,7 @@
             }
         },
         controls: {
-            init: function init () {
+            init: function init() {
                 /* Add event handlers for the controls */
 
                 var controls = this;
@@ -248,46 +251,45 @@
                 document.getElementById('gameCellSizeSelector').addEventListener('change', controls.changeCellSize);
                 document.getElementById('gamePercentageAliveSelector').addEventListener('change', controls.changePercentageAlive);
 
-                document.getElementById('toggleLife').innerText = "Pause";
+                document.getElementById('toggleLife').innerText = 'Pause';
             },
-            start: function start () {
+            start: function start() {
                 /* Start life again if it's paused */
 
                 game.runLife();
 
-                document.getElementById('toggleLife').innerText = "Pause";
+                document.getElementById('toggleLife').innerText = 'Pause';
             },
-            pause: function pause () {
+            pause: function pause() {
                 /* Pause game, kill timer */
 
                 clearTimeout(game.lifeTimer);
                 game.lifeTimer = null;
 
-                document.getElementById('toggleLife').innerText = "Start";
+                document.getElementById('toggleLife').innerText = 'Start';
             },
-            reset: function reset () {
+            reset: function reset() {
                 /* Restarts the game */
 
                 game.init();
             },
-            toggleLife: function toggleLife () {
+            toggleLife: function toggleLife() {
                 /* Toggle between start and pause */
 
                 if (game.lifeTimer === null) {
                     game.controls.start();
-                }
-                else {
+                } else {
                     game.controls.pause();
                 }
             },
-            createGeneration: function createGeneration () {
+            createGeneration: function createGeneration() {
                 /* Manually change to next generation when paused */
 
                 game.controls.pause();
 
                 game.evolve();
             },
-            changeGenerationSpeed: function changeGenerationSpeed () {
+            changeGenerationSpeed: function changeGenerationSpeed() {
                 /* Changes the generation speed in ms */
 
                 var generationSpeedSelector = this,
@@ -295,7 +297,7 @@
 
                 game.generationSpeed = generationSpeed;
             },
-            changeCellSize: function changeCellSize () {
+            changeCellSize: function changeCellSize() {
                 /* Changes cell size in px */
 
                 var gameCellSizeSelector = this,
@@ -304,7 +306,7 @@
                 game.cellSize = cellSize;
                 game.init();
             },
-            changePercentageAlive: function changePercentageAlive () {
+            changePercentageAlive: function changePercentageAlive() {
                 /* Changes percentage of cells that is alive and resets the game */
 
                 var gamePercentageAliveSelector = this,
@@ -322,7 +324,7 @@
             lifeCalcSpeedElement: null,
             paintSpeeds: [],
             lifeCalcSpeeds: [],
-            init: function init () {
+            init: function init() {
                 /* Create event handlers for statistics */
 
                 var statistics = this;
@@ -333,19 +335,19 @@
                 statistics.paintSpeedElement = document.getElementById('paintSpeed');
                 statistics.lifeCalcSpeedElement = document.getElementById('lifeCalcSpeed');
             },
-            changeCellsCount: function changeCellsCount (numberOfCells) {
+            changeCellsCount: function changeCellsCount(numberOfCells) {
                 var statistics = this;
                 statistics.numberOfCellsElement.innerText = numberOfCells;
             },
-            changeLivingCellsCount: function changeLivingCellsCount (numberOfLivingCells) {
+            changeLivingCellsCount: function changeLivingCellsCount(numberOfLivingCells) {
                 var statistics = this;
                 statistics.numberOfLivingCellsElement.innerText = numberOfLivingCells;
             },
-            changeGeneration: function changeGeneration (generation) {
+            changeGeneration: function changeGeneration(generation) {
                 var statistics = this;
                 statistics.generationElement.innerText = generation;
             },
-            changePaintSpeed: function changePaintSpeed (paintSpeed) {
+            changePaintSpeed: function changePaintSpeed(paintSpeed) {
                 /* Add to the paint speed statistics, keep 20 in memory and
                    get the average of these */
 
@@ -365,7 +367,7 @@
 
                 statistics.paintSpeedElement.innerText = Math.floor(totalPaintSpeed / statistics.paintSpeeds.length);
             },
-           changeLifeCalcSpeed: function changeLifeCalcSpeed (lifeCalcSpeed) {
+            changeLifeCalcSpeed: function changeLifeCalcSpeed(lifeCalcSpeed) {
                 /* Add to the life calculation speed statistics, keep 20 in memory and
                    get the average of these */
 
