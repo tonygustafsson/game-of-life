@@ -1,7 +1,7 @@
 // @flow
 
 import { paint, numberOfColumns, numberOfRows } from './canvas';
-import { Statistics } from './statistics';
+import { changeCellsCount, changeLifeCalcSpeed, changeLivingCellsCount } from './statistics';
 
 type CellType = {
     row: number,
@@ -106,7 +106,7 @@ export const evolve = function evolve() {
     paint();
 
     // Change cell count in statistics
-    Statistics.changeCellsCount(cells.length);
+    changeCellsCount(cells.length);
 };
 
 const predictCellStates = function predictCellStates() {
@@ -135,8 +135,8 @@ const predictCellStates = function predictCellStates() {
     });
 
     // Add performance and living cell count to statistics
-    Statistics.changeLivingCellsCount(livingCells);
-    Statistics.changeLifeCalcSpeed(performance.now() - performanceStart);
+    changeLivingCellsCount(livingCells);
+    changeLifeCalcSpeed(performance.now() - performanceStart);
 };
 
 const changeCellStates = function changeCellStates() {
@@ -148,5 +148,6 @@ const changeCellStates = function changeCellStates() {
 };
 
 export const initLife = function initLife() {
+    generation = 0;
     createCells();
 };

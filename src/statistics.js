@@ -1,77 +1,80 @@
 // @flow
 
-export const Statistics: StatisticsType = {
-    numberOfCellsElement: null,
-    numberOfLivingCellsElement: null,
-    generationElement: null,
-    paintSpeedElement: null,
-    lifeCalcSpeedElement: null,
-    paintSpeeds: [],
-    lifeCalcSpeeds: [],
-    init: function init() {
-        /* Create event handlers for statistics */
+var numberOfCellsElement = null;
+var numberOfLivingCellsElement = null;
+var generationElement = null;
+var paintSpeedElement = null;
+var lifeCalcSpeedElement = null;
+var paintSpeeds = [];
+var lifeCalcSpeeds = [];
 
-        var statistics = this;
+export const initStatistics = function initStatistics() {
+    /* Create event handlers for statistics */
 
-        statistics.numberOfCellsElement = document.getElementById('numberOfCells');
-        statistics.numberOfLivingCellsElement = document.getElementById('numberOfLivingCells');
-        statistics.generationElement = document.getElementById('generation');
-        statistics.paintSpeedElement = document.getElementById('paintSpeed');
-        statistics.lifeCalcSpeedElement = document.getElementById('lifeCalcSpeed');
-    },
-    changeCellsCount: function changeCellsCount(numberOfCells) {
-        var statistics = this;
-        if (statistics.numberOfCellsElement) {
-            statistics.numberOfCellsElement.innerText = numberOfCells.toString();
-        }
-    },
-    changeLivingCellsCount: function changeLivingCellsCount(numberOfLivingCells) {
-        var statistics = this;
-        if (statistics.numberOfLivingCellsElement) statistics.numberOfLivingCellsElement.innerText = numberOfLivingCells.toString();
-    },
-    changeGeneration: function changeGeneration(generation) {
-        var statistics = this;
-        statistics.generationElement.innerText = generation.toString();
-    },
-    changePaintSpeed: function changePaintSpeed(paintSpeed) {
-        /* Add to the paint speed statistics, keep 20 in memory and
+    numberOfCellsElement = document.getElementById('numberOfCells');
+    numberOfLivingCellsElement = document.getElementById('numberOfLivingCells');
+    generationElement = document.getElementById('generation');
+    paintSpeedElement = document.getElementById('paintSpeed');
+    lifeCalcSpeedElement = document.getElementById('lifeCalcSpeed');
+};
+
+export const changeCellsCount = function changeCellsCount(numberOfCells: number) {
+    if (numberOfCellsElement) {
+        numberOfCellsElement.innerText = numberOfCells.toString();
+    }
+};
+
+export const changeLivingCellsCount = function changeLivingCellsCount(numberOfLivingCells: number) {
+    if (numberOfLivingCellsElement) numberOfLivingCellsElement.innerText = numberOfLivingCells.toString();
+};
+
+const changeGeneration = function changeGeneration(generation) {
+    if (generationElement) {
+        generationElement.innerText = generation.toString();
+    }
+};
+
+export const changePaintSpeed = function changePaintSpeed(paintSpeed: number) {
+    /* Add to the paint speed statistics, keep 20 in memory and
            get the average of these */
 
-        var statistics = this,
-            totalPaintSpeed = 0,
-            maxNumberOfPaintSpeeds = 20;
+    var totalPaintSpeed = 0,
+        maxNumberOfPaintSpeeds = 20;
 
-        if (statistics.paintSpeeds.length > maxNumberOfPaintSpeeds - 1) {
-            statistics.paintSpeeds.shift();
-        }
+    if (paintSpeeds.length > maxNumberOfPaintSpeeds - 1) {
+        paintSpeeds.shift();
+    }
 
-        statistics.paintSpeeds.push(paintSpeed);
+    paintSpeeds.push(paintSpeed);
 
-        for (var i = 0; i < statistics.paintSpeeds.length; i++) {
-            totalPaintSpeed = totalPaintSpeed + statistics.paintSpeeds[i];
-        }
+    for (var i = 0; i < paintSpeeds.length; i++) {
+        totalPaintSpeed = totalPaintSpeed + paintSpeeds[i];
+    }
 
-        statistics.paintSpeedElement.innerText = Math.floor(totalPaintSpeed / statistics.paintSpeeds.length);
-    },
-    changeLifeCalcSpeed: function changeLifeCalcSpeed(lifeCalcSpeed) {
-        /* Add to the life calculation speed statistics, keep 20 in memory and
+    if (paintSpeedElement) {
+        paintSpeedElement.innerText = Math.floor(totalPaintSpeed / paintSpeeds.length).toString();
+    }
+};
+
+export const changeLifeCalcSpeed = function changeLifeCalcSpeed(lifeCalcSpeed: number) {
+    /* Add to the life calculation speed statistics, keep 20 in memory and
            get the average of these */
 
-        var statistics = this,
-            totalLifeCalcSpeed = 0,
-            maxNumberOfLifeCalcSpeeds = 20;
+    var totalLifeCalcSpeed = 0,
+        maxNumberOfLifeCalcSpeeds = 20;
 
-        if (statistics.lifeCalcSpeeds.length > maxNumberOfLifeCalcSpeeds - 1) {
-            statistics.lifeCalcSpeeds.shift();
-        }
+    if (lifeCalcSpeeds.length > maxNumberOfLifeCalcSpeeds - 1) {
+        lifeCalcSpeeds.shift();
+    }
 
-        statistics.lifeCalcSpeeds.push(lifeCalcSpeed);
+    lifeCalcSpeeds.push(lifeCalcSpeed);
 
-        for (var i = 0; i < statistics.lifeCalcSpeeds.length; i++) {
-            totalLifeCalcSpeed = totalLifeCalcSpeed + statistics.lifeCalcSpeeds[i];
-        }
+    for (var i = 0; i < lifeCalcSpeeds.length; i++) {
+        totalLifeCalcSpeed = totalLifeCalcSpeed + lifeCalcSpeeds[i];
+    }
 
-        statistics.lifeCalcSpeedElement.innerText = Math.floor(totalLifeCalcSpeed / statistics.lifeCalcSpeeds.length);
+    if (lifeCalcSpeedElement) {
+        lifeCalcSpeedElement.innerText = Math.floor(totalLifeCalcSpeed / lifeCalcSpeeds.length).toString();
     }
 };
 

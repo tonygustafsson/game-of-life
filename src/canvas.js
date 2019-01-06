@@ -1,6 +1,7 @@
 // @flow
 
 import { cellSize, cells } from './life';
+import { changePaintSpeed } from './statistics';
 
 export var numberOfRows: number = 0;
 export var numberOfColumns: number = 0;
@@ -53,7 +54,7 @@ export const paint: function = function paintCanvas() {
         });
 
         // Write the paint speed to the statistics
-        //this.statistics.changePaintSpeed(performance.now() - performanceStart);
+        changePaintSpeed(performance.now() - performanceStart);
     };
 
 type CanvasType = {
