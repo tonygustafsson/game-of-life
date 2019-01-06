@@ -2,64 +2,44 @@
 
 export const Controls: ControlType = {
     runLife: null,
-    lifeTimer: null,
+    lifeTimerId: null,
     gameInit: null,
     evolve: null,
     generationSpeed: null,
+    toggleLifeElement: null,
+    createGenerationElement: null,
+    resetElement: null,
     cellSize: 0,
     percentageAlive: 0,
-    init: function init(runLife, lifeTimer, gameInit, evolve, generationSpeed, cellSize, percentageAlive) {
+    init: function init(runLife, lifeTimerId, gameInit, evolve, generationSpeed, cellSize, percentageAlive) {
         this.runLife = runLife;
-        this.lifeTimer = lifeTimer;
+        this.lifeTimerId = lifeTimerId;
         this.gameInit = gameInit;
         this.evolve = evolve;
         this.generationSpeed = generationSpeed;
         this.cellSize = cellSize;
         this.percentageAlive = percentageAlive;
+        this.toggleLifeElement = document.getElementById('toggleLife');
+        this.createGenerationElement = document.getElementById('createGeneration');
+        this.resetElement = document.getElementById('reset');
 
         /* Add event handlers for the controls */
-
-        var controls = this;
-
-        var toggleLifeElement = document.getElementById('toggleLife');
-        if (toggleLifeElement) {
-            toggleLifeElement.addEventListener('click', controls.toggleLife);
-            toggleLifeElement.innerText = 'Pause';
+        if (this.toggleLifeElement) {
+            this.toggleLifeElement.addEventListener('click', this.toggleLife);
+            this.toggleLifeElement.innerText = 'Pause';
         }
 
-        var createGenerationElement = document.getElementById('toggleLife');
-        if (createGenerationElement) createGenerationElement.addEventListener('click', controls.createGeneration);
-
-        var resetElement = document.getElementById('reset');
-        if (resetElement) resetElement.addEventListener('click', controls.reset);
+        if (this.createGenerationElement) this.createGenerationElement.addEventListener('click', this.createGeneration);
+        if (this.resetElement) this.resetElement.addEventListener('click', this.reset);
 
         var generationSpeedSelectorElement = document.getElementById('generationSpeedSelector');
         if (generationSpeedSelectorElement) {
-            generationSpeedSelectorElement.addEventListener('change', controls.changeGenerationSpeed);
-            generationSpeedSelectorElement.addEventListener('change', controls.changeCellSize);
+            generationSpeedSelectorElement.addEventListener('change', this.changeGenerationSpeed);
+            generationSpeedSelectorElement.addEventListener('change', this.changeCellSize);
         }
 
         var gamePercentageAliveSelector = document.getElementById('gamePercentageAliveSelector');
-        if (gamePercentageAliveSelector) gamePercentageAliveSelector.addEventListener('change', controls.changePercentageAlive);
-    },
-    start: function start() {
-        /* Start life again if it's paused */
-
-        this.runLife();
-
-        var createGenerationElement = document.getElementById('toggleLife');
-        if (createGenerationElement) createGenerationElement.innerText = 'Pause';
-    },
-    pause: function pause() {
-        /* Pause game, kill timer */
-
-        if (this.lifeTimer !== null) {
-            clearTimeout(this.lifeTimer);
-        }
-        Controls.lifeTimer = null;
-
-        var toggleLifeElement = document.getElementById('toggleLife');
-        if (toggleLifeElement) toggleLifeElement.innerText = 'Start';
+        if (gamePercentageAliveSelector) gamePercentageAliveSelector.addEventListener('change', this.changePercentageAlive);
     },
     reset: function reset() {
         /* Restarts the game */
@@ -69,16 +49,17 @@ export const Controls: ControlType = {
     toggleLife: function toggleLife() {
         /* Toggle between start and pause */
 
-        if (this.lifeTimer === null) {
-            Controls.start();
+        if (Controls.lifeTimerId === null) {
+            Controls.runLife();
+            if (Controls.toggleLifeElement) Controls.toggleLifeElement.innerText = 'Pause';
         } else {
-            Controls.pause();
+            clearInterval(Controls.lifeTimerId);
+            Controls.lifeTimerId = null;
+            if (Controls.toggleLifeElement) Controls.toggleLifeElement.innerText = 'Start';
         }
     },
     createGeneration: function createGeneration() {
         /* Manually change to next generation when paused */
-
-        Controls.pause();
 
         Controls.evolve();
     },
@@ -96,8 +77,8 @@ export const Controls: ControlType = {
         var gameCellSizeSelector = this,
             cellSize = parseInt(gameCellSizeSelector.options[gameCellSizeSelector.selectedIndex].value, 10);
 
-        Controls.cellSize = cellSize;
-        Controls.gameInit();
+        this.cellSize = cellSize;
+        this.gameInit();
     },
     changePercentageAlive: function changePercentageAlive() {
         /* Changes percentage of cells that is alive and resets the game */
@@ -105,17 +86,20 @@ export const Controls: ControlType = {
         var gamePercentageAliveSelector = this,
             percentageAlive = parseInt(gamePercentageAliveSelector.options[gamePercentageAliveSelector.selectedIndex].value, 10);
 
-            Controls.percentageAlive = percentageAlive;
-            Controls.gameInit();
+        this.percentageAlive = percentageAlive;
+        this.gameInit();
     }
 };
 
 type ControlType = {
-    start: Function,
-    pause: Function,
     evolve: function,
     cellSize: number,
+    percentageAlive: number;
+    toggleLife: function,
+    toggleLifeElement: ?HTMLElement,
+    resetElement: ?HTMLElement,
     gameInit: function,
-    lifeTimer: function,
+    runLife: function,
+    lifeTimerId: ?IntervalID,
     percentageAlive: number
 };

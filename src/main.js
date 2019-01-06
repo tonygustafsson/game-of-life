@@ -19,7 +19,7 @@ var game: GameType = {
     generationSpeed: 35,
     predictionMode: false,
     generation: 0,
-    lifeTimer: null,
+    lifeTimerId: null,
     init: function init() {
         /* Initializes the game, resets everything */
         var game = this;
@@ -28,7 +28,6 @@ var game: GameType = {
         game.numberOfRows = Math.floor(Canvas.height / game.cellSize);
         game.numberOfColumns = Math.floor(Canvas.width / game.cellSize);
 
-        game.controls.init(game.runLife, game.lifeTimer, game.init, game.evolve, game.generationSpeed, game.cellSize);
         game.cells = game.createCells();
         Statistics.init();
         Canvas.init(game.cells, Statistics, game.cellSize);
@@ -36,9 +35,9 @@ var game: GameType = {
         // Reset some stuff if the game is restarted
         game.generation = 0;
 
-        if (game.lifeTimer !== null) {
-            clearTimeout(game.lifeTimer);
-            game.lifeTimer = null;
+        if (game.lifeTimerId !== null) {
+            clearInterval(game.lifeTimerId);
+            game.lifeTimerId = null;
         }
 
         // Let's start the timer and get some life going
@@ -49,7 +48,8 @@ var game: GameType = {
 
         game.evolve();
 
-        game.lifeTimer = setTimeout(game.runLife, game.generationSpeed);
+        game.lifeTimerId = setInterval(game.evolve, game.generationSpeed);
+        game.controls.init(game.runLife, game.lifeTimerId, game.init, game.evolve, game.generationSpeed, game.cellSize, game.percentageAlive);
     },
     evolve: function evolve() {
         /* Calculates which cells will be alive or dead */
