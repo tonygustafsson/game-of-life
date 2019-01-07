@@ -10,7 +10,7 @@ import { initControls, generationSpeed } from './controls';
 import { initStatistics } from './statistics';
 import { initLife, evolve, cells, cellSize } from './life';
 
-export let lifeTimerId = null;
+export let lifeTimerId: ?IntervalID = null;
 
 export const initGame = () => {
     /* Initializes the game, resets everything */
@@ -19,24 +19,19 @@ export const initGame = () => {
     initStatistics();
     initControls();
 
+    // Let's start the timer and get some life going
+    startLife(generationSpeed);
+};
+
+export const pauseLife = () => {
     if (lifeTimerId !== null) {
         clearInterval(lifeTimerId);
         lifeTimerId = null;
     }
-
-    // Let's start the timer and get some life going
-    runLife();
 };
 
-export const runLife = function runLife() {
-    /* Keeps track of timer, makes the cells evolve automatically */
-    evolve();
-
+export const startLife = (generationSpeed: number) => {
     lifeTimerId = setInterval(evolve, generationSpeed);
-};
-
-export const changeLifeTimerId = (id: ?IntervalID) => {
-    lifeTimerId = id;
 };
 
 (function gameOfLife() {

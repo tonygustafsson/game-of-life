@@ -1,10 +1,10 @@
 // @flow
 
 import { initCanvas } from './canvas';
-import { initLife, evolve, changeCellSize, changePercentageAlive } from './life';
-import { initGame, runLife, lifeTimerId, changeLifeTimerId } from './game';
+import { evolve, changeCellSize, changePercentageAlive, generation } from './life';
+import { initGame, lifeTimerId, pauseLife, startLife } from './game';
 
-export let generationSpeed: number = 32;
+export let generationSpeed: number = 35;
 
 let toggleLifeElement: ?HTMLElement = null;
 let createGenerationElement: ?HTMLElement = null;
@@ -25,7 +25,7 @@ export const initControls = () => {
     createGenerationElement = document.getElementById(createGenerationElementId);
     resetElement = document.getElementById(resetElementId);
     generationSpeedSelectorElement = document.getElementById(generationSpeedSelectorId);
-    gameCellSizeSelectorElement = document.getElementById(generationSpeedSelectorId);
+    gameCellSizeSelectorElement = document.getElementById(gameCellSizeSelectorId);
     percentageAliveSelectorElement = document.getElementById(percentageAliveSelectorId);
 
     /* Add event handlers for the controls */
@@ -34,35 +34,25 @@ export const initControls = () => {
         toggleLifeElement.innerText = 'Pause';
     }
 
-    if (createGenerationElement)
-        createGenerationElement.addEventListener('click', () => {
-            evolve();
-        });
-
+    if (createGenerationElement) createGenerationElement.addEventListener('click', evolve);
     if (resetElement) resetElement.addEventListener('click', reset);
-
-    if (generationSpeedSelectorElement) {
-        generationSpeedSelectorElement.addEventListener('change', changeGenerationSpeed);
-        generationSpeedSelectorElement.addEventListener('change', changeCurrentCellSize);
-    }
-
+    if (generationSpeedSelectorElement) generationSpeedSelectorElement.addEventListener('change', changeGenerationSpeed);
+    if (gameCellSizeSelectorElement) gameCellSizeSelectorElement.addEventListener('change', changeCurrentCellSize);
     if (percentageAliveSelectorElement) percentageAliveSelectorElement.addEventListener('change', changeCurrentPercentageAlive);
 };
 
 const reset = () => {
     /* Restarts the game */
-    initCanvas();
-    initLife();
+    initGame();
 };
 
 const toggleLife = () => {
     /* Toggle between start and pause */
     if (lifeTimerId === null) {
-        runLife();
+        startLife(generationSpeed);
         if (toggleLifeElement) toggleLifeElement.innerText = 'Pause';
     } else {
-        clearInterval(lifeTimerId);
-        changeLifeTimerId(null);
+        pauseLife();
         if (toggleLifeElement) toggleLifeElement.innerText = 'Start';
     }
 };
@@ -73,6 +63,8 @@ const changeGenerationSpeed = () => {
         let newGenerationSpeed = parseInt(generationSpeedSelectorElement.options[generationSpeedSelectorElement.selectedIndex].value, 10);
 
         generationSpeed = newGenerationSpeed;
+        pauseLife();
+        startLife(generationSpeed);
     }
 };
 
@@ -82,6 +74,7 @@ const changeCurrentCellSize = () => {
         let newCellSize = parseInt(gameCellSizeSelectorElement.options[gameCellSizeSelectorElement.selectedIndex].value, 10);
 
         changeCellSize(newCellSize);
+        pauseLife();
         initGame();
     }
 };

@@ -26,8 +26,8 @@ export const updateStatistics = (statistics: StatisticsObjType) => {
         Cells: ${statistics.totalCells} |
         Living: ${statistics.livingCells} |
         Generation: ${statistics.generation} |
-        Avg paint speed: ${getAvgTime(paintTimes, paintSpeedsToRemember, statistics.paintTime)} ms |
-        Avg live calc speed: ${getAvgTime(calcTimes, calcSpeedsToRemember, statistics.calcTime)} ms
+        Paint speed: ${getAvgTime(paintTimes, paintSpeedsToRemember, statistics.paintTime)} ms |
+        Calculation speed: ${getAvgTime(calcTimes, calcSpeedsToRemember, statistics.calcTime)} ms
     `;
 
     if (statisticsElement) {
