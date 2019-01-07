@@ -3,32 +3,59 @@
 import { paint, numberOfColumns, numberOfRows } from './canvas';
 import { changeCellsCount, changeLifeCalcSpeed, changeLivingCellsCount } from './statistics';
 
-type CellType = {
-    row: number,
-    column: number,
-    alive: boolean,
-    willBeAlive: boolean,
-    getNeighbors: Function,
-    getCellColor: Function
+export let cellSize: number = 6;
+export let generation: number = 0;
+export let cells: Array<CellType> = [];
+
+let predictionMode: boolean = false;
+let percentageAlive: number = 15;
+
+export const evolve = () => {
+    /* Calculates which cells will be alive or dead */
+
+    if (predictionMode) {
+        // Only predict the changes, so we can mark cells as new or dying
+        predictCellStates();
+    } else {
+        // Actually move cells in memory
+        changeCellStates();
+    }
+
+    // Every other evolution, it will first predict, then make cell changes
+    predictionMode = !predictionMode;
+
+    // Write to statistics which generation we are on now
+    generation++;
+
+    paint();
+
+    // Change cell count in statistics
+    changeCellsCount(cells.length);
 };
 
-export var cellSize: number = 6;
-var predictionMode: boolean = false;
-export var generation: number = 0;
-export var cells: Array<CellType> = [];
-var percentageAlive: number = 15;
+export const changeCellSize = (newCellSize: number) => {
+    cellSize = newCellSize;
+};
 
-const createCell = function createCell(rowId: number, columnId: number, alive: boolean) {
+export const changePercentageAlive = (newPercentageAlive: number) => {
+    percentageAlive = newPercentageAlive;
+};
+
+export const initLife = () => {
+    generation = 0;
+    createCells();
+};
+
+const createCell = (rowId: number, columnId: number, alive: boolean) => {
     /* Will create a specific cell which will end up in an array */
-
-    var cell = {
+    let cell = {
         row: rowId,
         column: columnId,
         alive: alive,
         willBeAlive: alive,
         getNeighbors: function getNeighbors() {
             /* Check how many neighbors are alive for this cell */
-            var neighbors = 0,
+            let neighbors = 0,
                 position = cell.row * numberOfColumns + cell.column,
                 top = cells[position - numberOfColumns],
                 topRight = cells[position - (numberOfColumns - 1)],
@@ -53,7 +80,7 @@ const createCell = function createCell(rowId: number, columnId: number, alive: b
         getCellColor: function getColor() {
             /* Get the cell color depending of cell state */
 
-            var cell = this;
+            let cell = this;
 
             if (cell.alive && !cell.willBeAlive) return '#b6542c';
             // Dying cell
@@ -70,59 +97,36 @@ const createCell = function createCell(rowId: number, columnId: number, alive: b
     return cell;
 };
 
-const createCells = function createCells() {
+const createCells = () => {
     /* Will create all cells. It will add them to an array, and keep track
            of imaginary rows and columns too keep track of neighbors  */
 
-    for (var rowId = 0; rowId < numberOfRows; rowId++) {
-        for (var columnId = 0; columnId < numberOfColumns; columnId++) {
+    for (let rowId = 0; rowId < numberOfRows; rowId++) {
+        for (let columnId = 0; columnId < numberOfColumns; columnId++) {
             // Check if it's initially dead or alive
-            var alive = Math.random() < percentageAlive / 100;
+            let alive = Math.random() < percentageAlive / 100;
 
             // Create the cell and add it to an array
-            var cell = createCell(rowId, columnId, alive);
+            let cell = createCell(rowId, columnId, alive);
             cells.push(cell);
         }
     }
 };
 
-export const evolve = function evolve() {
-    /* Calculates which cells will be alive or dead */
-
-    if (predictionMode) {
-        // Only predict the changes, so we can mark cells as new or dying
-        predictCellStates();
-    } else {
-        // Actually move cells in memory
-        changeCellStates();
-    }
-
-    // Every other evolution, it will first predict, then make cell changes
-    predictionMode = !predictionMode;
-
-    // Write to statistics which generation we are on now
-    generation++;
-
-    paint();
-
-    // Change cell count in statistics
-    changeCellsCount(cells.length);
-};
-
-const predictCellStates = function predictCellStates() {
+const predictCellStates = () => {
     /*  Only predict the changes, so we can mark cells as new or dying without
             actually killing or creating something new. If we would kill cells every run
             the surrounding cells would response to this death directly, the game needs the
             all cells to change in response to the last cell move */
 
-    var livingCells = 0;
+    let livingCells = 0;
 
     // Keep track of how long this execution takes
-    var performanceStart = performance.now();
+    let performanceStart = performance.now();
 
     cells.forEach(cell => {
         // Get the number of neighbors for each cell
-        var neighbors = cell.getNeighbors();
+        let neighbors = cell.getNeighbors();
 
         if (cell.alive) {
             // Only survive if it got 2-3 neighbors
@@ -139,7 +143,7 @@ const predictCellStates = function predictCellStates() {
     changeLifeCalcSpeed(performance.now() - performanceStart);
 };
 
-const changeCellStates = function changeCellStates() {
+const changeCellStates = () => {
     /* Will execute the cell states depending of what predictCellStates() said */
 
     cells.forEach(cell => {
@@ -147,7 +151,11 @@ const changeCellStates = function changeCellStates() {
     });
 };
 
-export const initLife = function initLife() {
-    generation = 0;
-    createCells();
+type CellType = {
+    row: number,
+    column: number,
+    alive: boolean,
+    willBeAlive: boolean,
+    getNeighbors: Function,
+    getCellColor: Function
 };

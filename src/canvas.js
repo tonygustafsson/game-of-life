@@ -3,16 +3,18 @@
 import { cellSize, cells } from './life';
 import { changePaintSpeed } from './statistics';
 
-export var numberOfRows: number = 0;
-export var numberOfColumns: number = 0;
-var width = 0;
-var height = 0;
-var contextElement: any = null;
-var context: any = null;
+const contextElementId: string = 'game-canvas';
 
-export const initCanvas: function = function initCanvas() {
-    contextElement = document.getElementById('game-canvas');
-    context = contextElement.getContext('2d');
+export let numberOfRows: number = 0;
+export let numberOfColumns: number = 0;
+let width: number = 0;
+let height: number = 0;
+let contextElement: ?HTMLElement = null;
+let context: any = null;
+
+export const initCanvas = () => {
+    contextElement = document.getElementById(contextElementId);
+    if (contextElement instanceof HTMLCanvasElement) context = contextElement.getContext('2d');
 
     width = Math.floor(window.innerWidth * 0.95);
     height = Math.floor(window.innerHeight * 0.8);
@@ -22,45 +24,37 @@ export const initCanvas: function = function initCanvas() {
 
     numberOfRows = Math.floor(height / cellSize);
     numberOfColumns = Math.floor(width / cellSize);
-}
+};
 
-export const paint: function = function paintCanvas() {
-        /* Will paint each generation to the canvas */
+export const paint = () => {
+    /* Will paint each generation to the canvas */
 
-        // Keep track of performance
-        var performanceStart = performance.now();
+    // Keep track of performance
+    let performanceStart = performance.now();
 
-        // Clear all cells so we won't have to paint out dead cells (performance hog)
-        if (context !== undefined) {
-            context.clearRect(0, 0, width, height);
+    // Clear all cells so we won't have to paint out dead cells (performance hog)
+    if (context !== undefined) {
+        context.clearRect(0, 0, width, height);
+    }
+
+    cells.forEach(cell => {
+        // Get the X and Y position from the cell position and size
+        let posX = Math.floor(cell.column * cellSize) + 1,
+            posY = Math.floor(cell.row * cellSize) + 1;
+
+        // Get the cell color depending on cell state
+        let cellColor = cell.getCellColor();
+
+        if (cellColor) {
+            // Do not paint if dead cell
+            context.beginPath();
+            // Leave a pixel to create a border (actual borders on rectangle did slow it down for some reason)
+            context.rect(posX, posY, cellSize - 1, cellSize - 1);
+            context.fillStyle = cellColor;
+            context.fill();
         }
-       
-        cells.forEach(cell => {
-            // Get the X and Y position from the cell position and size
-            var posX = Math.floor(cell.column * cellSize) + 1,
-                posY = Math.floor(cell.row * cellSize) + 1;
+    });
 
-            // Get the cell color depending on cell state
-            var cellColor = cell.getCellColor();
-
-            if (cellColor) {
-                // Do not paint if dead cell
-                context.beginPath();
-                // Leave a pixel to create a border (actual borders on rectangle did slow it down for some reason)
-                context.rect(posX, posY, cellSize - 1, cellSize - 1);
-                context.fillStyle = cellColor;
-                context.fill();
-            }
-        });
-
-        // Write the paint speed to the statistics
-        changePaintSpeed(performance.now() - performanceStart);
-    };
-
-type CanvasType = {
-    init: Function,
-    height: number,
-    width: number,
-    context: any,
-    paint: Function
+    // Write the paint speed to the statistics
+    changePaintSpeed(performance.now() - performanceStart);
 };

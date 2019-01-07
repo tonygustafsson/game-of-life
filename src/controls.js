@@ -1,18 +1,32 @@
 // @flow
 
 import { initCanvas } from './canvas';
-import { initLife, evolve } from './life';
-import { runLife, lifeTimerId, changeLifeTimerId } from './game';
+import { initLife, evolve, changeCellSize, changePercentageAlive } from './life';
+import { initGame, runLife, lifeTimerId, changeLifeTimerId } from './game';
 
-export var generationSpeed = null;
-var toggleLifeElement = null;
-var createGenerationElement = null;
-var resetElement = null;
+export let generationSpeed: number = 32;
 
-export const initControls = function() {
-    toggleLifeElement = document.getElementById('toggleLife');
-    createGenerationElement = document.getElementById('createGeneration');
-    resetElement = document.getElementById('reset');
+let toggleLifeElement: ?HTMLElement = null;
+let createGenerationElement: ?HTMLElement = null;
+let resetElement: ?HTMLElement = null;
+let generationSpeedSelectorElement: ?HTMLElement = null;
+let gameCellSizeSelectorElement: ?HTMLElement = null;
+let percentageAliveSelectorElement: ?HTMLElement = null;
+
+const toggleLifeElementId = 'toggleLife';
+const createGenerationElementId = 'createGeneration';
+const resetElementId = 'reset';
+const generationSpeedSelectorId = 'generationSpeedSelector';
+const gameCellSizeSelectorId = 'gameCellSizeSelector';
+const percentageAliveSelectorId = 'gamePercentageAliveSelector';
+
+export const initControls = () => {
+    toggleLifeElement = document.getElementById(toggleLifeElementId);
+    createGenerationElement = document.getElementById(createGenerationElementId);
+    resetElement = document.getElementById(resetElementId);
+    generationSpeedSelectorElement = document.getElementById(generationSpeedSelectorId);
+    gameCellSizeSelectorElement = document.getElementById(generationSpeedSelectorId);
+    percentageAliveSelectorElement = document.getElementById(percentageAliveSelectorId);
 
     /* Add event handlers for the controls */
     if (toggleLifeElement) {
@@ -20,29 +34,29 @@ export const initControls = function() {
         toggleLifeElement.innerText = 'Pause';
     }
 
-    if (createGenerationElement) createGenerationElement.addEventListener('click', createGeneration);
+    if (createGenerationElement)
+        createGenerationElement.addEventListener('click', () => {
+            evolve();
+        });
+
     if (resetElement) resetElement.addEventListener('click', reset);
 
-    var generationSpeedSelectorElement = document.getElementById('generationSpeedSelector');
     if (generationSpeedSelectorElement) {
         generationSpeedSelectorElement.addEventListener('change', changeGenerationSpeed);
-        generationSpeedSelectorElement.addEventListener('change', changeCellSize);
+        generationSpeedSelectorElement.addEventListener('change', changeCurrentCellSize);
     }
 
-    var gamePercentageAliveSelector = document.getElementById('gamePercentageAliveSelector');
-    if (gamePercentageAliveSelector) gamePercentageAliveSelector.addEventListener('change', changePercentageAlive);
+    if (percentageAliveSelectorElement) percentageAliveSelectorElement.addEventListener('change', changeCurrentPercentageAlive);
 };
 
-const reset = function reset() {
+const reset = () => {
     /* Restarts the game */
-
     initCanvas();
     initLife();
 };
 
-const toggleLife = function toggleLife() {
+const toggleLife = () => {
     /* Toggle between start and pause */
-
     if (lifeTimerId === null) {
         runLife();
         if (toggleLifeElement) toggleLifeElement.innerText = 'Pause';
@@ -53,50 +67,31 @@ const toggleLife = function toggleLife() {
     }
 };
 
-const createGeneration = function createGeneration() {
-    /* Manually change to next generation when paused */
-
-    evolve();
-};
-
-const changeGenerationSpeed = function changeGenerationSpeed() {
+const changeGenerationSpeed = () => {
     /* Changes the generation speed in ms */
+    if (generationSpeedSelectorElement instanceof HTMLSelectElement) {
+        let newGenerationSpeed = parseInt(generationSpeedSelectorElement.options[generationSpeedSelectorElement.selectedIndex].value, 10);
 
-    var generationSpeedSelector = this,
-        generationSpeed = parseInt(generationSpeedSelector.options[generationSpeedSelector.selectedIndex].value, 10);
-
-    this.generationSpeed = generationSpeed;
+        generationSpeed = newGenerationSpeed;
+    }
 };
 
-const changeCellSize = function changeCellSize() {
+const changeCurrentCellSize = () => {
     /* Changes cell size in px */
+    if (gameCellSizeSelectorElement instanceof HTMLSelectElement) {
+        let newCellSize = parseInt(gameCellSizeSelectorElement.options[gameCellSizeSelectorElement.selectedIndex].value, 10);
 
-    var gameCellSizeSelector = this,
-        cellSize = parseInt(gameCellSizeSelector.options[gameCellSizeSelector.selectedIndex].value, 10);
-
-    this.cellSize = cellSize;
-    this.gameInit();
+        changeCellSize(newCellSize);
+        initGame();
+    }
 };
 
-const changePercentageAlive = function changePercentageAlive() {
+const changeCurrentPercentageAlive = () => {
     /* Changes percentage of cells that is alive and resets the game */
+    if (percentageAliveSelectorElement instanceof HTMLSelectElement) {
+        let newPercentageAlive = parseInt(percentageAliveSelectorElement.options[percentageAliveSelectorElement.selectedIndex].value, 10);
 
-    var gamePercentageAliveSelector = this,
-        percentageAlive = parseInt(gamePercentageAliveSelector.options[gamePercentageAliveSelector.selectedIndex].value, 10);
-
-    this.percentageAlive = percentageAlive;
-    this.gameInit();
-};
-
-type ControlType = {
-    evolve: Function,
-    cellSize: number,
-    percentageAlive: number,
-    toggleLife: Function,
-    toggleLifeElement: ?HTMLElement,
-    resetElement: ?HTMLElement,
-    gameInit: Function,
-    runLife: Function,
-    lifeTimerId: ?IntervalID,
-    percentageAlive: number
+        changePercentageAlive(newPercentageAlive);
+        initGame();
+    }
 };
