@@ -1,79 +1,49 @@
 // @flow
 
-let numberOfCellsElement: ?HTMLElement = null;
-let numberOfLivingCellsElement: ?HTMLElement = null;
-let generationElement: ?HTMLElement = null;
-let paintSpeedElement: ?HTMLElement = null;
-let lifeCalcSpeedElement: ?HTMLElement = null;
-let paintSpeeds: Array<number> = [];
-let lifeCalcSpeeds: Array<number> = [];
+let statisticsElement: ?HTMLElement = null;
+let paintTimes: Array<number> = [];
+let calcTimes: Array<number> = [];
+
+const statisticsElementId = 'statistics';
+const calcSpeedsToRemember = 20;
+const paintSpeedsToRemember = 20;
 
 export const initStatistics = () => {
     /* Create event handlers for statistics */
-
-    numberOfCellsElement = document.getElementById('numberOfCells');
-    numberOfLivingCellsElement = document.getElementById('numberOfLivingCells');
-    generationElement = document.getElementById('generation');
-    paintSpeedElement = document.getElementById('paintSpeed');
-    lifeCalcSpeedElement = document.getElementById('lifeCalcSpeed');
+    statisticsElement = document.getElementById(statisticsElementId);
 };
 
-export const changeCellsCount = (numberOfCells: number) => {
-    if (numberOfCellsElement) {
-        numberOfCellsElement.innerText = numberOfCells.toString();
-    }
+type StatisticsObjType = {
+    totalCells: number,
+    livingCells: number,
+    generation: number,
+    calcTime: number,
+    paintTime: number
 };
 
-export const changeLivingCellsCount = (numberOfLivingCells: number) => {
-    if (numberOfLivingCellsElement) numberOfLivingCellsElement.innerText = numberOfLivingCells.toString();
-};
+export const updateStatistics = (statistics: StatisticsObjType) => {
+    let statisticsHtml = `
+        Cells: ${statistics.totalCells} |
+        Living: ${statistics.livingCells} |
+        Generation: ${statistics.generation} |
+        Avg paint speed: ${getAvgTime(paintTimes, paintSpeedsToRemember, statistics.paintTime)} ms |
+        Avg live calc speed: ${getAvgTime(calcTimes, calcSpeedsToRemember, statistics.calcTime)} ms
+    `;
 
-export const changePaintSpeed = (paintSpeed: number) => {
-    /* Add to the paint speed statistics, keep 20 in memory and
-           get the average of these */
-
-    let totalPaintSpeed = 0,
-        maxNumberOfPaintSpeeds = 20;
-
-    if (paintSpeeds.length > maxNumberOfPaintSpeeds - 1) {
-        paintSpeeds.shift();
-    }
-
-    paintSpeeds.push(paintSpeed);
-
-    for (let i = 0; i < paintSpeeds.length; i++) {
-        totalPaintSpeed = totalPaintSpeed + paintSpeeds[i];
-    }
-
-    if (paintSpeedElement) {
-        paintSpeedElement.innerText = Math.floor(totalPaintSpeed / paintSpeeds.length).toString();
+    if (statisticsElement) {
+        statisticsElement.innerHTML = statisticsHtml;
     }
 };
 
-export const changeLifeCalcSpeed = (lifeCalcSpeed: number) => {
-    /* Add to the life calculation speed statistics, keep 20 in memory and
-           get the average of these */
-
-    let totalLifeCalcSpeed = 0,
-        maxNumberOfLifeCalcSpeeds = 20;
-
-    if (lifeCalcSpeeds.length > maxNumberOfLifeCalcSpeeds - 1) {
-        lifeCalcSpeeds.shift();
+const getAvgTime = (array: Array<number>, itemsToRemember: number, time: number) => {
+    if (array.length > itemsToRemember - 1) {
+        // Remove old calc times
+        array.shift();
     }
 
-    lifeCalcSpeeds.push(lifeCalcSpeed);
+    array.push(time);
 
-    for (let i = 0; i < lifeCalcSpeeds.length; i++) {
-        totalLifeCalcSpeed = totalLifeCalcSpeed + lifeCalcSpeeds[i];
-    }
+    let avgTime = array.reduce((a, b) => a + b, 0) / array.length;
 
-    if (lifeCalcSpeedElement) {
-        lifeCalcSpeedElement.innerText = Math.floor(totalLifeCalcSpeed / lifeCalcSpeeds.length).toString();
-    }
-};
-
-const changeGeneration = (generation: number) => {
-    if (generationElement) {
-        generationElement.innerText = generation.toString();
-    }
+    return parseInt(avgTime, 10).toString();
 };

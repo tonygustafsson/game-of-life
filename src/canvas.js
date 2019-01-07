@@ -1,7 +1,6 @@
 // @flow
 
 import { cellSize, cells } from './life';
-import { changePaintSpeed } from './statistics';
 
 const contextElementId: string = 'game-canvas';
 
@@ -55,6 +54,5 @@ export const paint = () => {
         }
     });
 
-    // Write the paint speed to the statistics
-    changePaintSpeed(performance.now() - performanceStart);
+    return performance.now() - performanceStart;
 };

@@ -1,7 +1,7 @@
 // @flow
 
 import { paint, numberOfColumns, numberOfRows } from './canvas';
-import { changeCellsCount, changeLifeCalcSpeed, changeLivingCellsCount } from './statistics';
+import { updateStatistics } from './statistics';
 
 export let cellSize: number = 6;
 export let generation: number = 0;
@@ -12,10 +12,11 @@ let percentageAlive: number = 15;
 
 export const evolve = () => {
     /* Calculates which cells will be alive or dead */
+    let statistics = null;
 
     if (predictionMode) {
         // Only predict the changes, so we can mark cells as new or dying
-        predictCellStates();
+        statistics = predictCellStates();
     } else {
         // Actually move cells in memory
         changeCellStates();
@@ -27,10 +28,13 @@ export const evolve = () => {
     // Write to statistics which generation we are on now
     generation++;
 
-    paint();
+    let paintTime = paint();
 
     // Change cell count in statistics
-    changeCellsCount(cells.length);
+    if (statistics) {
+        statistics.paintTime = paintTime;
+        updateStatistics(statistics);
+    }
 };
 
 export const changeCellSize = (newCellSize: number) => {
@@ -138,9 +142,13 @@ const predictCellStates = () => {
         }
     });
 
-    // Add performance and living cell count to statistics
-    changeLivingCellsCount(livingCells);
-    changeLifeCalcSpeed(performance.now() - performanceStart);
+    return {
+        livingCells: livingCells,
+        generation: generation,
+        totalCells: cells.length,
+        calcTime: performance.now() - performanceStart,
+        paintTime: 0 /* Will be populated later on by canvas.js */
+    };
 };
 
 const changeCellStates = () => {
