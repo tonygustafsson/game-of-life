@@ -10,6 +10,19 @@ export let cells: Array<CellType> = [];
 let predictionMode: boolean = false;
 let percentageAlive: number = 15;
 
+export const changeCellSize = (newCellSize: number) => {
+    cellSize = newCellSize;
+};
+
+export const changePercentageAlive = (newPercentageAlive: number) => {
+    percentageAlive = newPercentageAlive;
+};
+
+export const initLife = () => {
+    generation = 0;
+    createCells();
+};
+
 export const evolve = () => {
     /* Calculates which cells will be alive or dead */
     let statistics = null;
@@ -35,19 +48,6 @@ export const evolve = () => {
         statistics.paintTime = paintTime;
         updateStatistics(statistics);
     }
-};
-
-export const changeCellSize = (newCellSize: number) => {
-    cellSize = newCellSize;
-};
-
-export const changePercentageAlive = (newPercentageAlive: number) => {
-    percentageAlive = newPercentageAlive;
-};
-
-export const initLife = () => {
-    generation = 0;
-    createCells();
 };
 
 const createCell = (rowId: number, columnId: number, alive: boolean) => {
