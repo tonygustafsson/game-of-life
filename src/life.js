@@ -45,7 +45,20 @@ export const evolve = () => {
     }
 };
 
-export const getNeighbors = (cell: CellType) => {
+const createCell = (rowId: number, columnId: number, alive: boolean) => {
+    /* Will create a specific cell which will end up in an array */
+    let cell = {
+        row: rowId,
+        column: columnId,
+        alive: alive,
+        willBeAlive: alive,
+        neighbors: 0
+    };
+
+    return cell;
+};
+
+const getNeighbors = (cell: CellType) => {
     /* Check how many neighbors are alive for this cell */
     let neighbors = 0,
         position = cell.row * numberOfColumns + cell.column,
@@ -68,18 +81,6 @@ export const getNeighbors = (cell: CellType) => {
     if (typeof bottomLeft !== 'undefined' && bottomLeft.alive) neighbors++;
 
     return neighbors;
-};
-
-const createCell = (rowId: number, columnId: number, alive: boolean) => {
-    /* Will create a specific cell which will end up in an array */
-    let cell = {
-        row: rowId,
-        column: columnId,
-        alive: alive,
-        willBeAlive: alive
-    };
-
-    return cell;
 };
 
 const createCells = () => {
@@ -113,15 +114,15 @@ const predictCellStates = () => {
 
     cells.forEach(cell => {
         // Get the number of neighbors for each cell
-        let neighbors = getNeighbors(cell);
+        cell.neighbors = getNeighbors(cell);
 
         if (cell.alive) {
             // Only survive if it got 2-3 neighbors
-            cell.willBeAlive = neighbors === 2 || neighbors === 3;
+            cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
             livingCells++;
         } else {
             // Create new cell if 3 neighbors
-            cell.willBeAlive = neighbors === 3;
+            cell.willBeAlive = cell.neighbors === 3;
         }
     });
 
@@ -146,5 +147,6 @@ type CellType = {
     row: number,
     column: number,
     alive: boolean,
-    willBeAlive: boolean
+    willBeAlive: boolean,
+    neighbors: number
 };

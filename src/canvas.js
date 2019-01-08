@@ -1,6 +1,6 @@
 // @flow
 
-import { cells, getNeighbors } from './life';
+import { cells } from './life';
 
 const contextElementId: string = 'game-canvas';
 
@@ -67,7 +67,7 @@ const getCellColor = cell => {
 
     if (cell.alive && !cell.willBeAlive) return '#b6542c';
     // Dying cell
-    else if (cell.alive && getNeighbors(cell) === 3) return '#006040';
+    else if (cell.alive && cell.neighbors === 3) return '#006040';
     // Popular cell
     else if (cell.alive) return '#008000';
     // Alive
