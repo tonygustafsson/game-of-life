@@ -22,6 +22,15 @@ This is written in JavaScript (ES6), mostly as an experiment with Canvas element
 -   **life.js**: Creates all the cells, checks neighbors, creates and kill life.
 -   **statistics.js**: Shows statistics on number of living cells, paint times and such.
 
+## Make it run
+
+```
+npm install
+npm run build
+```
+
+Then just open ./dist/index.html in a browser or upload the files to a server.
+
 ## Demo
 
 [Try it out](http://www.tonyg.se/projects/game-of-life/)
