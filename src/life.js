@@ -3,16 +3,11 @@
 import { paint, numberOfColumns, numberOfRows } from './canvas';
 import { updateStatistics } from './statistics';
 
-export let cellSize: number = 6;
 export let generation: number = 0;
 export let cells: Array<CellType> = [];
 
 let predictionMode: boolean = false;
 let percentageAlive: number = 15;
-
-export const changeCellSize = (newCellSize: number) => {
-    cellSize = newCellSize;
-};
 
 export const changePercentageAlive = (newPercentageAlive: number) => {
     percentageAlive = newPercentageAlive;
@@ -104,6 +99,8 @@ const createCell = (rowId: number, columnId: number, alive: boolean) => {
 const createCells = () => {
     /* Will create all cells. It will add them to an array, and keep track
            of imaginary rows and columns too keep track of neighbors  */
+
+    cells = [];
 
     for (let rowId = 0; rowId < numberOfRows; rowId++) {
         for (let columnId = 0; columnId < numberOfColumns; columnId++) {

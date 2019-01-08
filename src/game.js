@@ -8,11 +8,13 @@
 import { initCanvas } from './canvas';
 import { initControls, generationSpeed } from './controls';
 import { initStatistics } from './statistics';
-import { initLife, evolve, cells, cellSize } from './life';
+import { initLife, evolve } from './life';
 
 let lifeTimerId: ?IntervalID = null;
 
 export const initGame = () => {
+    pauseLife();
+
     /* Initializes the game, resets everything */
     initCanvas();
     initLife();
@@ -33,8 +35,6 @@ export const pauseLife = () => {
 };
 
 export const startLife = (generationSpeed: number) => {
-    pauseLife();
-
     console.log('Start life');
     lifeTimerId = setInterval(evolve, generationSpeed);
 };

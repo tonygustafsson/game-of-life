@@ -1,7 +1,7 @@
 // @flow
 
-import { initCanvas } from './canvas';
-import { evolve, changeCellSize, changePercentageAlive, generation } from './life';
+import { initCanvas, changeCellSize } from './canvas';
+import { evolve, changePercentageAlive, generation } from './life';
 import { initGame, isItAlive, pauseLife, startLife } from './game';
 
 export let generationSpeed: number = 35;

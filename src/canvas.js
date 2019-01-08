@@ -1,11 +1,12 @@
 // @flow
 
-import { cellSize, cells } from './life';
+import { cells } from './life';
 
 const contextElementId: string = 'game-canvas';
 
 export let numberOfRows: number = 0;
 export let numberOfColumns: number = 0;
+export let cellSize: number = 6;
 let width: number = 0;
 let height: number = 0;
 let contextElement: ?HTMLElement = null;
@@ -23,6 +24,10 @@ export const initCanvas = () => {
 
     numberOfRows = Math.floor(height / cellSize);
     numberOfColumns = Math.floor(width / cellSize);
+};
+
+export const changeCellSize = (newCellSize: number) => {
+    cellSize = newCellSize;
 };
 
 export const paint = () => {
