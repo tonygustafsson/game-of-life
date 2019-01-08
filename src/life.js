@@ -45,55 +45,55 @@ export const evolve = () => {
     }
 };
 
+export const getCellColor = (cell: CellType) => {
+    /* Get the cell color depending of cell state */
+
+    if (cell.alive && !cell.willBeAlive) return '#b6542c';
+    // Dying cell
+    else if (cell.alive && getNeighbors(cell) === 3) return '#006040';
+    // Popular cell
+    else if (cell.alive) return '#008000';
+    // Alive
+    else if (!cell.alive && cell.willBeAlive) return '#0057aa';
+    // New cell
+    else return false; // Dead, do not paint
+};
+
 const createCell = (rowId: number, columnId: number, alive: boolean) => {
     /* Will create a specific cell which will end up in an array */
     let cell = {
         row: rowId,
         column: columnId,
         alive: alive,
-        willBeAlive: alive,
-        getNeighbors: function getNeighbors() {
-            /* Check how many neighbors are alive for this cell */
-            let neighbors = 0,
-                position = cell.row * numberOfColumns + cell.column,
-                top = cells[position - numberOfColumns],
-                topRight = cells[position - (numberOfColumns - 1)],
-                topLeft = cells[position - (numberOfColumns + 1)],
-                right = cells[position + 1],
-                left = cells[position - 1],
-                bottom = cells[position + numberOfColumns],
-                bottomRight = cells[position + (numberOfColumns + 1)],
-                bottomLeft = cells[position + (numberOfColumns - 1)];
-
-            if (typeof top !== 'undefined' && top.alive) neighbors++;
-            if (typeof topLeft !== 'undefined' && topLeft.alive) neighbors++;
-            if (typeof topRight !== 'undefined' && topRight.alive) neighbors++;
-            if (typeof right !== 'undefined' && right.alive) neighbors++;
-            if (typeof left !== 'undefined' && left.alive) neighbors++;
-            if (typeof bottom !== 'undefined' && bottom.alive) neighbors++;
-            if (typeof bottomRight !== 'undefined' && bottomRight.alive) neighbors++;
-            if (typeof bottomLeft !== 'undefined' && bottomLeft.alive) neighbors++;
-
-            return neighbors;
-        },
-        getCellColor: function getColor() {
-            /* Get the cell color depending of cell state */
-
-            let cell = this;
-
-            if (cell.alive && !cell.willBeAlive) return '#b6542c';
-            // Dying cell
-            else if (cell.alive && cell.getNeighbors() === 3) return '#006040';
-            // Popular cell
-            else if (cell.alive) return '#008000';
-            // Alive
-            else if (!cell.alive && cell.willBeAlive) return '#0057aa';
-            // New cell
-            else return false; // Dead, do not paint
-        }
+        willBeAlive: alive
     };
 
     return cell;
+};
+
+const getNeighbors = (cell: CellType) => {
+    /* Check how many neighbors are alive for this cell */
+    let neighbors = 0,
+        position = cell.row * numberOfColumns + cell.column,
+        top = cells[position - numberOfColumns],
+        topRight = cells[position - (numberOfColumns - 1)],
+        topLeft = cells[position - (numberOfColumns + 1)],
+        right = cells[position + 1],
+        left = cells[position - 1],
+        bottom = cells[position + numberOfColumns],
+        bottomRight = cells[position + (numberOfColumns + 1)],
+        bottomLeft = cells[position + (numberOfColumns - 1)];
+
+    if (typeof top !== 'undefined' && top.alive) neighbors++;
+    if (typeof topLeft !== 'undefined' && topLeft.alive) neighbors++;
+    if (typeof topRight !== 'undefined' && topRight.alive) neighbors++;
+    if (typeof right !== 'undefined' && right.alive) neighbors++;
+    if (typeof left !== 'undefined' && left.alive) neighbors++;
+    if (typeof bottom !== 'undefined' && bottom.alive) neighbors++;
+    if (typeof bottomRight !== 'undefined' && bottomRight.alive) neighbors++;
+    if (typeof bottomLeft !== 'undefined' && bottomLeft.alive) neighbors++;
+
+    return neighbors;
 };
 
 const createCells = () => {
@@ -127,7 +127,7 @@ const predictCellStates = () => {
 
     cells.forEach(cell => {
         // Get the number of neighbors for each cell
-        let neighbors = cell.getNeighbors();
+        let neighbors = getNeighbors(cell);
 
         if (cell.alive) {
             // Only survive if it got 2-3 neighbors
@@ -160,7 +160,5 @@ type CellType = {
     row: number,
     column: number,
     alive: boolean,
-    willBeAlive: boolean,
-    getNeighbors: Function,
-    getCellColor: Function
+    willBeAlive: boolean
 };

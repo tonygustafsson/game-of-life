@@ -1,6 +1,6 @@
 // @flow
 
-import { cells } from './life';
+import { cells, getCellColor } from './life';
 
 const contextElementId: string = 'game-canvas';
 
@@ -47,7 +47,7 @@ export const paint = () => {
             posY = Math.floor(cell.row * cellSize) + 1;
 
         // Get the cell color depending on cell state
-        let cellColor = cell.getCellColor();
+        let cellColor = getCellColor(cell);
 
         if (cellColor) {
             // Do not paint if dead cell
