@@ -14,7 +14,10 @@ let context: any = null;
 
 export const initCanvas = () => {
     contextElement = document.getElementById(contextElementId);
-    if (contextElement instanceof HTMLCanvasElement) context = contextElement.getContext('2d');
+    if (contextElement instanceof HTMLCanvasElement)
+        context = contextElement.getContext('2d', {
+            alpha: false
+        });
 
     width = Math.floor(window.innerWidth * 0.95);
     height = Math.floor(window.innerHeight * 0.8);
@@ -51,11 +54,10 @@ export const paint = () => {
 
         if (cellColor) {
             // Do not paint if dead cell
-            context.beginPath();
+
             // Leave a pixel to create a border (actual borders on rectangle did slow it down for some reason)
-            context.rect(posX, posY, cellSize - 1, cellSize - 1);
             context.fillStyle = cellColor;
-            context.fill();
+            context.fillRect(posX, posY, cellSize - 1, cellSize - 1);
         }
     });
 
