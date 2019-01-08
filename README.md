@@ -3,6 +3,8 @@
 This is an implementation of the famous [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 It's a demonstration of how simple rules can create complex patterns.
 
+![Game of Life screenshot](game-of-life.png 'Game of Life screenshot')
+
 ## Rules
 
 -   Any live cell with fewer than two live neighbours dies, as if caused by under-population.
@@ -12,7 +14,13 @@ It's a demonstration of how simple rules can create complex patterns.
 
 ## Code
 
-This is written in JavaScript, mostly as an experiment with Canvas element and JavaScript performance.
+This is written in JavaScript (ES6), mostly as an experiment with Canvas element and JavaScript performance.
+
+-   canvas.js: Takes care of painting the canvas.
+-   controls.js: Takes care of changing settings and pause/start/reset.
+-   game.js: The starting point of the game, controls the timer and initilize everything.
+-   life.js: Creates all the cells, checks neighbors, creates and kill life.
+-   statistics.js: Shows statistics on number of living cells, paint times and such.
 
 ## Demo
 
