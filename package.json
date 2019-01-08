@@ -1,0 +1,31 @@
+{
+    "name": "game-of-life",
+    "version": "1.0.0",
+    "description": "A Game of Life version",
+    "main": "script.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tonygustafsson/game-of-life.git"
+    },
+    "author": "Tony Gustafsson",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/tonygustafsson/game-of-life/issues"
+    },
+    "homepage": "https://github.com/tonygustafsson/game-of-life#readme",
+    "devDependencies": {
+        "@babel/cli": "^7.2.3",
+        "@babel/core": "^7.2.2",
+        "@babel/preset-env": "^7.2.3",
+        "@babel/preset-flow": "^7.0.0",
+        "babel-loader": "^8.0.4",
+        "flow-bin": "^0.89.0",
+        "path": "^0.12.7",
+        "webpack": "^4.28.3",
+        "webpack-cli": "^3.2.0"
+    }
+}
