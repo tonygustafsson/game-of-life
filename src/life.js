@@ -45,33 +45,7 @@ export const evolve = () => {
     }
 };
 
-export const getCellColor = (cell: CellType) => {
-    /* Get the cell color depending of cell state */
-
-    if (cell.alive && !cell.willBeAlive) return '#b6542c';
-    // Dying cell
-    else if (cell.alive && getNeighbors(cell) === 3) return '#006040';
-    // Popular cell
-    else if (cell.alive) return '#008000';
-    // Alive
-    else if (!cell.alive && cell.willBeAlive) return '#0057aa';
-    // New cell
-    else return false; // Dead, do not paint
-};
-
-const createCell = (rowId: number, columnId: number, alive: boolean) => {
-    /* Will create a specific cell which will end up in an array */
-    let cell = {
-        row: rowId,
-        column: columnId,
-        alive: alive,
-        willBeAlive: alive
-    };
-
-    return cell;
-};
-
-const getNeighbors = (cell: CellType) => {
+export const getNeighbors = (cell: CellType) => {
     /* Check how many neighbors are alive for this cell */
     let neighbors = 0,
         position = cell.row * numberOfColumns + cell.column,
@@ -94,6 +68,18 @@ const getNeighbors = (cell: CellType) => {
     if (typeof bottomLeft !== 'undefined' && bottomLeft.alive) neighbors++;
 
     return neighbors;
+};
+
+const createCell = (rowId: number, columnId: number, alive: boolean) => {
+    /* Will create a specific cell which will end up in an array */
+    let cell = {
+        row: rowId,
+        column: columnId,
+        alive: alive,
+        willBeAlive: alive
+    };
+
+    return cell;
 };
 
 const createCells = () => {
