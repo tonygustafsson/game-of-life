@@ -56,50 +56,57 @@
         <div class="controls">
             <div id="statistics"></div>
 
-            <p>
-                Generation speed:
-                <select id="generationSpeedSelector">
-                    <option value="0">0 ms</option>
-                    <option value="1">1 ms</option>
-                    <option value="2">2 ms</option>
-                    <option value="5">5 ms</option>
-                    <option value="10">10 ms</option>
-                    <option value="20">20 ms</option>
-                    <option value="35" selected>35 ms</option>
-                    <option value="50">50 ms</option>
-                    <option value="100">100 ms</option>
-                    <option value="250">250 ms</option>
-                    <option value="500">500 ms</option>
-                    <option value="1000">1000 ms</option>
-                </select>
-                | Cell size:
-                <select id="gameCellSizeSelector">
-                    <option value="2">2 px</option>
-                    <option value="4">5 px</option>
-                    <option value="6" selected>6 px</option>
-                    <option value="8">8 px</option>
-                    <option value="10">10 px</option>
-                    <option value="12">12 px</option>
-                    <option value="14">14 px</option>
-                    <option value="16">16 px</option>
-                    <option value="18">18 px</option>
-                    <option value="20">20 px</option>
-                </select>
-                | Alive:
-                <select id="gamePercentageAliveSelector">
-                    <option value="1">1 %</option>
-                    <option value="2">2 %</option>
-                    <option value="6">6 %</option>
-                    <option value="8">8 %</option>
-                    <option value="10">10 %</option>
-                    <option value="12">12 %</option>
-                    <option value="15" selected>15 %</option>
-                    <option value="20">20 %</option>
-                    <option value="25">25 %</option>
-                    <option value="50">50 %</option>
-                </select>
-                | <a href="#" id="toggleLife">Pause</a> | <a href="#" id="createGeneration">Next</a> | <a href="#" id="reset">Reset</a>
-            </p>
+            <div id="controls">
+                <span class="controls__item">
+                    Generation speed:
+                    <select id="generationSpeedSelector">
+                        <option value="0">0 ms</option>
+                        <option value="1">1 ms</option>
+                        <option value="2">2 ms</option>
+                        <option value="5">5 ms</option>
+                        <option value="10">10 ms</option>
+                        <option value="20">20 ms</option>
+                        <option value="35" selected>35 ms</option>
+                        <option value="50">50 ms</option>
+                        <option value="100">100 ms</option>
+                        <option value="250">250 ms</option>
+                        <option value="500">500 ms</option>
+                        <option value="1000">1000 ms</option>
+                    </select>
+                </span>
+                <span class="controls__item">
+                    Cell size:
+                    <select id="gameCellSizeSelector">
+                        <option value="2">2 px</option>
+                        <option value="4">5 px</option>
+                        <option value="6" selected>6 px</option>
+                        <option value="8">8 px</option>
+                        <option value="10">10 px</option>
+                        <option value="12">12 px</option>
+                        <option value="14">14 px</option>
+                        <option value="16">16 px</option>
+                        <option value="18">18 px</option>
+                        <option value="20">20 px</option>
+                    </select>
+                </span>
+                <span class="controls__item">
+                    Alive:
+                    <select id="gamePercentageAliveSelector">
+                        <option value="1">1 %</option>
+                        <option value="2">2 %</option>
+                        <option value="6">6 %</option>
+                        <option value="8">8 %</option>
+                        <option value="10">10 %</option>
+                        <option value="12">12 %</option>
+                        <option value="15" selected>15 %</option>
+                        <option value="20">20 %</option>
+                        <option value="25">25 %</option>
+                        <option value="50">50 %</option>
+                    </select>
+                </span>
+            </div>
+
+            <div><button id="toggleLife">Pause</button> <button id="createGeneration">Next</button> <button href="#" id="reset">Reset</button></div>
         </div>
 
         <div class="description">
@@ -107,7 +114,7 @@
 
             <p>
                 This is a JavaScript implementation of the famous <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
-                It's a demonstration of how simple rules can create complex patterns.
+                It's a demonstration of how simple rules can create complex patterns. Try painting new life with mouse/touch :)
             </p>
 
             <h3>Rules</h3>
@@ -142,6 +149,6 @@
         </div>
 
         <script type="text/javascript" src="main.js"></script>
-        <!--script type="text/javascript" src="script.js"></script-->
+        <script type="text/javascript" src="script.js"></script>
     </body>
 </html>

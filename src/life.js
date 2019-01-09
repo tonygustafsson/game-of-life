@@ -101,6 +101,14 @@ const createCells = () => {
     }
 };
 
+export const giveLifeToCell = (cellId: number) => {
+    /* Turn on life for specific cell */
+    if (typeof cells[cellId] === 'undefined') return;
+
+    cells[cellId].alive = true;
+    cells[cellId].willBeAlive = true;
+};
+
 const predictCellStates = () => {
     /*  Only predict the changes, so we can mark cells as new or dying without
             actually killing or creating something new. If we would kill cells every run
@@ -116,13 +124,18 @@ const predictCellStates = () => {
         // Get the number of neighbors for each cell
         cell.neighbors = getNeighbors(cell);
 
-        if (cell.alive) {
-            // Only survive if it got 2-3 neighbors
-            cell.willBeAlive = cell.neighbors === 2 || cell.neighbors === 3;
+        if (cell.alive && cell.neighbors < 2) {
+            // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+            cell.willBeAlive = false;
+        } else if (cell.alive && (cell.neighbors === 2 || cell.neighbors === 3)) {
+            // Any live cell with two or three live neighbors lives on to the next generation.
             livingCells++;
-        } else {
-            // Create new cell if 3 neighbors
-            cell.willBeAlive = cell.neighbors === 3;
+        } else if (cell.alive && cell.neighbors > 3) {
+            // Any live cell with more than three live neighbors dies, as if by overpopulation.
+            cell.willBeAlive = false;
+        } else if (!cell.alive && cell.neighbors === 3) {
+            // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+            cell.willBeAlive = true;
         }
     });
 

@@ -1,8 +1,14 @@
 // @flow
 
-import { cells } from './life';
+import { cells, giveLifeToCell } from './life';
 
 const contextElementId: string = 'game-canvas';
+const canvasWidthPercentage: number = 0.95;
+const canvasHeightPercentage: number = 0.8;
+const red: string = '#b6542c';
+const darkgreen: string = '#006040';
+const green: string = '#008000';
+const blue: string = '#0057aa';
 
 export let numberOfRows: number = 0;
 export let numberOfColumns: number = 0;
@@ -19,8 +25,8 @@ export const initCanvas = () => {
             alpha: false
         });
 
-    width = Math.floor(window.innerWidth * 0.95);
-    height = Math.floor(window.innerHeight * 0.8);
+    width = Math.floor(window.innerWidth * canvasWidthPercentage);
+    height = Math.floor(window.innerHeight * canvasHeightPercentage);
 
     context.canvas.width = width;
     context.canvas.height = height;
@@ -64,16 +70,27 @@ export const paint = () => {
     return performance.now() - performanceStart;
 };
 
+export const giveLifeToCellByCoordinates = (x: number, y: number) => {
+    /* Give life when drawing on canvas, get cellId by coordinates */
+    let row = Math.floor(y / cellSize),
+        column = Math.floor(x / cellSize),
+        cellsBeforeLastRow = (row + 1) * numberOfColumns,
+        cellId = cellsBeforeLastRow - numberOfColumns * 2 + column - 1;
+
+    giveLifeToCell(cellId);
+};
+
 const getCellColor = cell => {
     /* Get the cell color depending of cell state */
 
-    if (cell.alive && !cell.willBeAlive) return '#b6542c';
     // Dying cell
-    else if (cell.alive && cell.neighbors === 3) return '#006040';
+    if (cell.alive && !cell.willBeAlive) return red;
     // Popular cell
-    else if (cell.alive) return '#008000';
+    else if (cell.alive && cell.neighbors === 3) return darkgreen;
     // Alive
-    else if (!cell.alive && cell.willBeAlive) return '#0057aa';
+    else if (cell.alive) return green;
     // New cell
-    else return false; // Dead, do not paint
+    else if (!cell.alive && cell.willBeAlive) return blue;
+    // Dead, do not paint
+    else return false;
 };

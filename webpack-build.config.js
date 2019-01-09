@@ -1,7 +1,7 @@
 const path = require('path');
 
-const mode = 'development';
-const watch = true;
+const mode = 'production';
+const watch = false;
 
 module.exports = {
     entry: './src/game.js',
