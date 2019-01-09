@@ -31,6 +31,15 @@ npm run build
 
 Then just open ./dist/index.html in a browser or upload the files to a server.
 
+## Development run
+
+```
+npm install
+npm run dev
+```
+
+Then just open ./dist/index.html in a browser or upload the files to a server.
+
 ## Demo
 
 [Try it out](http://www.tonyg.se/projects/game-of-life/)
