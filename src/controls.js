@@ -1,6 +1,6 @@
 // @flow
 
-import { initCanvas, changeCellSize } from './canvas';
+import { initCanvas, changeCellSize, giveLifeToCellByCoordinates } from './canvas';
 import { evolve, changePercentageAlive, generation } from './life';
 import { initGame, isItAlive, pauseLife, startLife } from './game';
 
@@ -12,6 +12,8 @@ let resetElement: ?HTMLElement = null;
 let generationSpeedSelectorElement: ?HTMLElement = null;
 let cellSizeSelectorElement: ?HTMLElement = null;
 let percentageAliveSelectorElement: ?HTMLElement = null;
+let canvasElement: ?HTMLElement = null;
+let isPaintActive: boolean = false;
 
 const toggleLifeElementId = 'toggleLife';
 const createGenerationElementId = 'createGeneration';
@@ -19,6 +21,7 @@ const resetElementId = 'reset';
 const generationSpeedSelectorId = 'generationSpeedSelector';
 const cellSizeSelectorId = 'gameCellSizeSelector';
 const percentageAliveSelectorId = 'gamePercentageAliveSelector';
+const canvasElementId = 'game-canvas';
 
 export const initControls = () => {
     toggleLifeElement = document.getElementById(toggleLifeElementId);
@@ -27,6 +30,7 @@ export const initControls = () => {
     generationSpeedSelectorElement = document.getElementById(generationSpeedSelectorId);
     cellSizeSelectorElement = document.getElementById(cellSizeSelectorId);
     percentageAliveSelectorElement = document.getElementById(percentageAliveSelectorId);
+    canvasElement = document.getElementById(canvasElementId);
 
     /* Add event handlers for the controls */
     if (toggleLifeElement) {
@@ -39,6 +43,16 @@ export const initControls = () => {
     if (generationSpeedSelectorElement) generationSpeedSelectorElement.addEventListener('change', changeGenerationSpeed);
     if (cellSizeSelectorElement) cellSizeSelectorElement.addEventListener('change', changeCurrentCellSize);
     if (percentageAliveSelectorElement) percentageAliveSelectorElement.addEventListener('change', changeCurrentPercentageAlive);
+
+    if (canvasElement) {
+        /* Events for painting life on canvas */
+        canvasElement.addEventListener('mousedown', activatePaint);
+        canvasElement.addEventListener('touchstart', activatePaint);
+        canvasElement.addEventListener('mouseup', deActivatePaint);
+        canvasElement.addEventListener('touchend', deActivatePaint);
+        canvasElement.addEventListener('mousemove', createNewCellByPress);
+        canvasElement.addEventListener('touchmove', createNewCellByPress);
+    }
 };
 
 const reset = () => {
@@ -85,5 +99,38 @@ const changeCurrentPercentageAlive = () => {
 
         changePercentageAlive(newPercentageAlive);
         initGame();
+    }
+};
+
+const activatePaint = () => {
+    isPaintActive = true;
+};
+
+const deActivatePaint = () => {
+    isPaintActive = false;
+};
+
+const createNewCellByPress = (e: MouseEvent | TouchEvent) => {
+    if (!activatePaint) return;
+
+    e.preventDefault();
+
+    if (e.target instanceof HTMLElement) {
+        let canvasPos = e.target.getBoundingClientRect(),
+            pointerX = 0,
+            pointerY = 0;
+
+        if (e instanceof MouseEvent) {
+            pointerX = e.clientX;
+            pointerY = e.clientY;
+        } else {
+            pointerX = e.touches[0].clientX;
+            pointerY = e.touches[0].clientY;
+        }
+
+        let x = Math.floor(pointerX - canvasPos.left);
+        let y = Math.floor(pointerY - canvasPos.top);
+
+        giveLifeToCellByCoordinates(x, y);
     }
 };

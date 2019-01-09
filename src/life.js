@@ -101,6 +101,14 @@ const createCells = () => {
     }
 };
 
+export const giveLifeToCell = (cellId: number) => {
+    /* Turn on life for specific cell */
+    if (typeof cells[cellId] === 'undefined') return;
+
+    cells[cellId].alive = true;
+    cells[cellId].willBeAlive = true;
+};
+
 const predictCellStates = () => {
     /*  Only predict the changes, so we can mark cells as new or dying without
             actually killing or creating something new. If we would kill cells every run
