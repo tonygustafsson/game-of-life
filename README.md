@@ -57,3 +57,5 @@ Then just open ./dist/index.html in a browser or upload the files to a server.
 ## Demo
 
 [Try it out](http://www.tonyg.se/projects/game-of-life/)
+
+It's actually possible to paint new cells by dragging on the canvas area :)
