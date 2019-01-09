@@ -24,7 +24,7 @@ type StatisticsObjType = {
 export const updateStatistics = (statistics: StatisticsObjType) => {
     let statisticsHtml = `
         Cells: ${statistics.totalCells} |
-        Living: ${statistics.livingCells} |
+        Living: ${statistics.livingCells} (${Math.floor((statistics.livingCells / statistics.totalCells) * 100)}%) |
         Generation: ${statistics.generation} |
         Paint speed: ${getAvgTime(paintTimes, paintSpeedsToRemember, statistics.paintTime)} ms |
         Calculation speed: ${getAvgTime(calcTimes, calcSpeedsToRemember, statistics.calcTime)} ms
