@@ -111,7 +111,7 @@ const deActivatePaint = () => {
 };
 
 const createNewCellByPress = (e: MouseEvent | TouchEvent) => {
-    if (!activatePaint) return;
+    if (!isPaintActive) return;
 
     e.preventDefault();
 
