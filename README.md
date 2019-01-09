@@ -3,6 +3,20 @@
 This is an implementation of the famous [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 It's a demonstration of how simple rules can create complex patterns.
 
+## The challange
+
+As a developer it was somewhat of a challange, mostly because of performance.
+There can easily be 100 000 cells that can have cells that are alive, dying or
+resurrected. Each cell needs to keep track of it's neighbors, which demands
+high CPU usage.
+
+Most of the CPU time is used to paint the canvas though. Each frame is repainted
+fully depending on cell states. To keep performance in mind the dead cells isn't
+painted on the canvas at all.
+
+In the future I will try out webassembly and service workers to increase performance
+even more.
+
 ![Game of Life screenshot](game-of-life.png 'Game of Life screenshot')
 
 ## Rules
