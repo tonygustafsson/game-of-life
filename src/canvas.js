@@ -51,9 +51,11 @@ export const paint = () => {
     }
 
     cells.forEach(cell => {
+        let borderWidth = cellSize < 4 ? 0 : 1;
+
         // Get the X and Y position from the cell position and size
-        let posX = Math.floor(cell.column * cellSize) + 1,
-            posY = Math.floor(cell.row * cellSize) + 1;
+        let posX = Math.floor(cell.column * cellSize) + borderWidth,
+            posY = Math.floor(cell.row * cellSize) + borderWidth;
 
         // Get the cell color depending on cell state
         let cellColor = getCellColor(cell);
@@ -63,7 +65,7 @@ export const paint = () => {
 
             // Leave a pixel to create a border (actual borders on rectangle did slow it down for some reason)
             context.fillStyle = cellColor;
-            context.fillRect(posX, posY, cellSize - 1, cellSize - 1);
+            context.fillRect(posX, posY, cellSize - borderWidth, cellSize - borderWidth);
         }
     });
 
