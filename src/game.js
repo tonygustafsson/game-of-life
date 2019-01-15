@@ -25,7 +25,7 @@ export const initGame = () => {
     // Let's start the timer and get some life going
     startLife(generationSpeed);
 
-    initLifeWorkerHandler(numberOfColumns, numberOfRows);
+    //initLifeWorkerHandler(numberOfColumns, numberOfRows);
 };
 
 export const pauseLife = () => {
