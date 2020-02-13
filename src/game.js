@@ -9,7 +9,6 @@ import { initCanvas, numberOfColumns, numberOfRows } from './canvas';
 import { initControls, generationSpeed } from './controls';
 import { initStatistics } from './statistics';
 import { initLife, evolve } from './life';
-import { initLifeWorkerHandler } from './lifeWorkerHandler';
 
 let lifeTimerId: ?IntervalID = null;
 
@@ -24,8 +23,6 @@ export const initGame = () => {
 
     // Let's start the timer and get some life going
     startLife(generationSpeed);
-
-    //initLifeWorkerHandler(numberOfColumns, numberOfRows);
 };
 
 export const pauseLife = () => {
