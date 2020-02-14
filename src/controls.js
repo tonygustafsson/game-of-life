@@ -40,9 +40,11 @@ export const initControls = () => {
 
     if (createGenerationElement) createGenerationElement.addEventListener('click', evolve);
     if (resetElement) resetElement.addEventListener('click', reset);
-    if (generationSpeedSelectorElement) generationSpeedSelectorElement.addEventListener('change', changeGenerationSpeed);
+    if (generationSpeedSelectorElement)
+        generationSpeedSelectorElement.addEventListener('change', changeGenerationSpeed);
     if (cellSizeSelectorElement) cellSizeSelectorElement.addEventListener('change', changeCurrentCellSize);
-    if (percentageAliveSelectorElement) percentageAliveSelectorElement.addEventListener('change', changeCurrentPercentageAlive);
+    if (percentageAliveSelectorElement)
+        percentageAliveSelectorElement.addEventListener('change', changeCurrentPercentageAlive);
 
     if (canvasElement) {
         /* Events for painting life on canvas */
@@ -74,7 +76,10 @@ const toggleLife = () => {
 const changeGenerationSpeed = () => {
     /* Changes the generation speed in ms */
     if (generationSpeedSelectorElement instanceof HTMLSelectElement) {
-        let newGenerationSpeed = parseInt(generationSpeedSelectorElement.options[generationSpeedSelectorElement.selectedIndex].value, 10);
+        let newGenerationSpeed = parseInt(
+            generationSpeedSelectorElement.options[generationSpeedSelectorElement.selectedIndex].value,
+            10
+        );
 
         generationSpeed = newGenerationSpeed;
         pauseLife();
@@ -95,7 +100,10 @@ const changeCurrentCellSize = () => {
 const changeCurrentPercentageAlive = () => {
     /* Changes percentage of cells that is alive and resets the game */
     if (percentageAliveSelectorElement instanceof HTMLSelectElement) {
-        let newPercentageAlive = parseInt(percentageAliveSelectorElement.options[percentageAliveSelectorElement.selectedIndex].value, 10);
+        let newPercentageAlive = parseInt(
+            percentageAliveSelectorElement.options[percentageAliveSelectorElement.selectedIndex].value,
+            10
+        );
 
         changePercentageAlive(newPercentageAlive);
         initGame();
