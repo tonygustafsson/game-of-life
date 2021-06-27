@@ -52,7 +52,7 @@ const createCell = (rowId: number, columnId: number, alive: boolean) => {
         column: columnId,
         alive: alive,
         willBeAlive: alive,
-        neighbors: 0
+        neighbors: 0,
     };
 
     return cell;
@@ -120,7 +120,7 @@ const predictCellStates = () => {
     // Keep track of how long this execution takes
     let performanceStart = performance.now();
 
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
         // Get the number of neighbors for each cell
         cell.neighbors = getNeighbors(cell);
 
@@ -144,14 +144,14 @@ const predictCellStates = () => {
         generation: generation,
         totalCells: cells.length,
         calcTime: performance.now() - performanceStart,
-        paintTime: 0 /* Will be populated later on by canvas.js */
+        paintTime: 0 /* Will be populated later on by canvas.js */,
     };
 };
 
 const changeCellStates = () => {
     /* Will execute the cell states depending of what predictCellStates() said */
 
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
         cell.alive = cell.willBeAlive;
     });
 };
@@ -161,5 +161,5 @@ type CellType = {
     column: number,
     alive: boolean,
     willBeAlive: boolean,
-    neighbors: number
+    neighbors: number,
 };

@@ -39,7 +39,7 @@ export const startLife = (generationSpeed: number) => {
     lifeTimerId = setInterval(evolve, generationSpeed);
 };
 
-export const isItAlive = () => {
+export const isItAlive = (): boolean => {
     return lifeTimerId !== null;
 };
 

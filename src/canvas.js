@@ -22,7 +22,7 @@ export const initCanvas = () => {
     contextElement = document.getElementById(contextElementId);
     if (contextElement instanceof HTMLCanvasElement)
         context = contextElement.getContext('2d', {
-            alpha: false
+            alpha: false,
         });
 
     width = Math.floor(window.innerWidth * canvasWidthPercentage);
@@ -39,7 +39,7 @@ export const changeCellSize = (newCellSize: number) => {
     cellSize = newCellSize;
 };
 
-export const paint = () => {
+export const paint = (): number => {
     /* Will paint each generation to the canvas */
 
     // Keep track of performance
@@ -50,7 +50,7 @@ export const paint = () => {
         context.clearRect(0, 0, width, height);
     }
 
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
         let borderWidth = cellSize < 4 ? 0 : 1;
 
         // Get the X and Y position from the cell position and size
@@ -82,7 +82,7 @@ export const giveLifeToCellByCoordinates = (x: number, y: number) => {
     giveLifeToCell(cellId);
 };
 
-const getCellColor = cell => {
+const getCellColor = (cell) => {
     /* Get the cell color depending of cell state */
 
     // Dying cell

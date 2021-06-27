@@ -18,7 +18,7 @@ type StatisticsObjType = {
     livingCells: number,
     generation: number,
     calcTime: number,
-    paintTime: number
+    paintTime: number,
 };
 
 export const updateStatistics = (statistics: StatisticsObjType) => {
