@@ -30,11 +30,11 @@ even more.
 
 This is written in JavaScript (ES6), mostly as an experiment with Canvas element and JavaScript performance.
 
--   **canvas.js**: Takes care of painting the canvas.
--   **controls.js**: Takes care of changing settings and pause/start/reset.
--   **game.js**: The starting point of the game, controls the timer and initilize everything.
--   **life.js**: Creates all the cells, checks neighbors, creates and kill life.
--   **statistics.js**: Shows statistics on number of living cells, paint times and such.
+-   **index.ts**: The starting point of the game, controls the timer and initilize everything.
+-   **canvas.ts**: Takes care of painting the canvas.
+-   **controls.ts**: Takes care of changing settings and pause/start/reset.
+-   **life.ts**: Creates all the cells, checks neighbors, creates and kill life.
+-   **statistics.ts**: Shows statistics on number of living cells, paint times and such.
 
 ## Make it run
 
