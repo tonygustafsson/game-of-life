@@ -4,21 +4,24 @@ const mode = 'production';
 const watch = false;
 
 module.exports = {
-    entry: './src/game.js',
+    entry: './src/index.ts',
     mode: mode,
     watch: watch,
     output: {
         filename: 'main.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
     },
     module: {
         rules: [
             {
-                test: /.js$/,
+                test: /.ts$/,
                 exclude: /node_modules/,
-                use: ['babel-loader']
-            }
-        ]
+                use: ['ts-loader'],
+            },
+        ],
     },
-    plugins: []
+    resolve: {
+        extensions: ['.ts'],
+    },
+    plugins: [],
 };

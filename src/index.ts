@@ -1,16 +1,14 @@
-// @flow
-
 /* -------- GAME OF LIFE ---------- 
     Created by Tony Gustafsson
     More info: https://github.com/tonygustafsson/game-of-life/
 */
 
-import { initCanvas, numberOfColumns, numberOfRows } from './canvas';
+import { initCanvas } from './canvas';
 import { initControls, generationSpeed } from './controls';
 import { initStatistics } from './statistics';
 import { initLife, evolve } from './life';
 
-let lifeTimerId: ?IntervalID = null;
+let lifeTimerId: number | null = null;
 
 export const initGame = () => {
     pauseLife();
@@ -29,14 +27,14 @@ export const pauseLife = () => {
     if (lifeTimerId !== null) {
         console.log('Pause life');
 
-        clearInterval(lifeTimerId);
+        window.clearInterval(lifeTimerId);
         lifeTimerId = null;
     }
 };
 
 export const startLife = (generationSpeed: number) => {
     console.log('Start life');
-    lifeTimerId = setInterval(evolve, generationSpeed);
+    lifeTimerId = window.setInterval(evolve, generationSpeed);
 };
 
 export const isItAlive = (): boolean => {

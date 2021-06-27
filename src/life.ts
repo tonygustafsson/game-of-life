@@ -1,7 +1,6 @@
-// @flow
-
 import { paint, numberOfColumns, numberOfRows } from './canvas';
 import { updateStatistics } from './statistics';
+import type { Cell } from './types';
 
 export let generation: number = 0;
 export let cells: Array<CellType> = [];
@@ -47,7 +46,7 @@ export const evolve = () => {
 
 const createCell = (rowId: number, columnId: number, alive: boolean) => {
     /* Will create a specific cell which will end up in an array */
-    let cell = {
+    let cell: Cell = {
         row: rowId,
         column: columnId,
         alive: alive,
@@ -157,9 +156,9 @@ const changeCellStates = () => {
 };
 
 type CellType = {
-    row: number,
-    column: number,
-    alive: boolean,
-    willBeAlive: boolean,
-    neighbors: number,
+    row: number;
+    column: number;
+    alive: boolean;
+    willBeAlive: boolean;
+    neighbors: number;
 };

@@ -1,18 +1,16 @@
-// @flow
-
-import { initCanvas, changeCellSize, giveLifeToCellByCoordinates } from './canvas';
+import { changeCellSize, giveLifeToCellByCoordinates } from './canvas';
 import { evolve, changePercentageAlive, generation } from './life';
-import { initGame, isItAlive, pauseLife, startLife } from './game';
+import { initGame, isItAlive, pauseLife, startLife } from './index';
 
 export let generationSpeed: number = 35;
 
-let toggleLifeElement: ?HTMLElement = null;
-let createGenerationElement: ?HTMLElement = null;
-let resetElement: ?HTMLElement = null;
-let generationSpeedSelectorElement: ?HTMLElement = null;
-let cellSizeSelectorElement: ?HTMLElement = null;
-let percentageAliveSelectorElement: ?HTMLElement = null;
-let canvasElement: ?HTMLElement = null;
+let toggleLifeElement: HTMLElement | null = null;
+let createGenerationElement: HTMLElement | null = null;
+let resetElement: HTMLElement | null = null;
+let generationSpeedSelectorElement: HTMLElement | null = null;
+let cellSizeSelectorElement: HTMLElement | null = null;
+let percentageAliveSelectorElement: HTMLElement | null = null;
+let canvasElement: HTMLElement | null = null;
 let isPaintActive: boolean = false;
 
 const toggleLifeElementId = 'toggleLife';

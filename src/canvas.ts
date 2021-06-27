@@ -1,6 +1,5 @@
-// @flow
-
 import { cells, giveLifeToCell } from './life';
+import type { Cell } from './types';
 
 const contextElementId: string = 'game-canvas';
 const canvasWidthPercentage: number = 0.95;
@@ -15,7 +14,7 @@ export let numberOfColumns: number = 0;
 export let cellSize: number = 6;
 let width: number = 0;
 let height: number = 0;
-let contextElement: ?HTMLElement = null;
+let contextElement: HTMLElement | null = null;
 let context: any = null;
 
 export const initCanvas = () => {
@@ -82,7 +81,7 @@ export const giveLifeToCellByCoordinates = (x: number, y: number) => {
     giveLifeToCell(cellId);
 };
 
-const getCellColor = (cell) => {
+const getCellColor = (cell: Cell) => {
     /* Get the cell color depending of cell state */
 
     // Dying cell

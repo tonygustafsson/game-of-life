@@ -1,6 +1,4 @@
-// @flow
-
-let statisticsElement: ?HTMLElement = null;
+let statisticsElement: HTMLElement | null = null;
 let paintTimes: Array<number> = [];
 let calcTimes: Array<number> = [];
 
@@ -14,11 +12,11 @@ export const initStatistics = () => {
 };
 
 type StatisticsObjType = {
-    totalCells: number,
-    livingCells: number,
-    generation: number,
-    calcTime: number,
-    paintTime: number,
+    totalCells: number;
+    livingCells: number;
+    generation: number;
+    calcTime: number;
+    paintTime: number;
 };
 
 export const updateStatistics = (statistics: StatisticsObjType) => {
@@ -55,5 +53,5 @@ const getAvgTime = (array: Array<number>, itemsToRemember: number, time: number)
 
     let avgTime = array.reduce((a, b) => a + b, 0) / array.length;
 
-    return parseInt(avgTime, 10).toString();
+    return avgTime;
 };
