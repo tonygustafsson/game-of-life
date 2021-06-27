@@ -22,7 +22,7 @@ export const initCanvas = () => {
     contextElement = document.getElementById(contextElementId);
     if (contextElement instanceof HTMLCanvasElement)
         context = contextElement.getContext('2d', {
-            alpha: false,
+            alpha: true,
         });
 
     width = Math.floor(window.innerWidth * canvasWidthPercentage);
