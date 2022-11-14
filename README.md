@@ -3,9 +3,9 @@
 This is an implementation of the famous [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 It's a demonstration of how simple rules can create complex patterns.
 
-## The challange
+## The challenge
 
-As a developer it was somewhat of a challange, mostly because of performance.
+As a developer it was somewhat of a challenge, mostly because of performance.
 There can easily be 100 000 cells that can have cells that are alive, dying or
 resurrected. Each cell needs to keep track of it's neighbors, which demands
 high CPU usage.
@@ -30,7 +30,7 @@ even more.
 
 This is written in JavaScript (ES6), mostly as an experiment with Canvas element and JavaScript performance.
 
--   **index.ts**: The starting point of the game, controls the timer and initilize everything.
+-   **index.ts**: The starting point of the game, controls the timer and initialize everything.
 -   **canvas.ts**: Takes care of painting the canvas.
 -   **controls.ts**: Takes care of changing settings and pause/start/reset.
 -   **life.ts**: Creates all the cells, checks neighbors, creates and kill life.
@@ -56,6 +56,6 @@ Then just open ./dist/index.html in a browser or upload the files to a server.
 
 ## Demo
 
-[Try it out](http://www.tonyg.se/projects/game-of-life/)
+[Try it out](https://tonys-game-of-life.vercel.app/)
 
 It's actually possible to paint new cells by dragging on the canvas area :)
