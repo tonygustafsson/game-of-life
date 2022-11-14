@@ -53,5 +53,5 @@ const getAvgTime = (array: Array<number>, itemsToRemember: number, time: number)
 
     let avgTime = array.reduce((a, b) => a + b, 0) / array.length;
 
-    return avgTime;
+    return avgTime.toFixed(4);
 };
